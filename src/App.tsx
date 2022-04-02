@@ -56,7 +56,7 @@ function App() {
         formData.token,
         linesStrToArr(formData.ids),
         formData.workName,
-        formData.owner
+        formData.ownerName
       );
       setOrdersData(ordersData);
     }
@@ -70,7 +70,13 @@ function App() {
     }
 
     if (notClaimedOrders.length) {
-      await claimOrders(formData.token, formData.classInfo, notClaimedOrders);
+      await claimOrders(
+        formData.token,
+        notClaimedOrders,
+        formData.classInfo,
+        formData.ownerName,
+        formData.ownerEmail
+      );
       await queryOrderHandler(formData);
       alert("已重新获取数据，也可以去系统查看验证");
     }
@@ -84,12 +90,11 @@ function App() {
             若要<em>查询</em>，请确保用户ID、项目链接名称、归属人准确
           </p>
           <p>
-            若要<em>自动领单</em>，除了确保用户ID、项目链接名称、归属人准确，
+            若要<em>自动领单</em>，请确保用户ID、项目链接名称准确，
             <br />
-            <strong>重点注意token和课程名</strong>，因为
-            <strong>会决定归属人和所属班期</strong>
+            <strong>归属人、归属班期会决定归属人和所属班期</strong>
             <br />
-            <strong>token需要更新为认领人的token</strong>
+            归属人邮箱非必填，<strong>若公司存在归属人同名则必填</strong>
           </p>
         </div>
       </header>

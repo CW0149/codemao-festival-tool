@@ -4,7 +4,7 @@ import { ClassData, Order, OrderData } from "../constants/types";
 /**
  *
  * workName: string, // 项目链接名称
- * owner: string // 归属人
+ * ownerName: string // 归属人
  */
 
 const queryOrder = (token: string, userId: string) => {
@@ -53,7 +53,7 @@ const getOrderDataByUser = async (
   token: string,
   userId: string,
   workName: string,
-  owner: string
+  ownerName: string
 ): Promise<OrderData> => {
   if (!token || !userId) return null;
 
@@ -68,7 +68,7 @@ const getOrderDataByUser = async (
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
       const data: OrderData = { order: info[i], paid: true };
-      if (info[i].flagid_name === owner) {
+      if (info[i].flagid_name === ownerName) {
         data.claimed = true;
       }
       return data;
@@ -119,10 +119,41 @@ const claimOrder = (
   );
 };
 
-const getFlagid = (token: string) => {
+const getLoginFlagid = (token: string): Promise<number | null> => {
   return getData(token, "https://festival.codemao.cn/yyb2019/index/info").then(
-    (res) => res?.info?.id
+    (res) => res?.info?.id ?? null
   );
+};
+
+const getFlagid = (
+  token: string,
+  ownerName: string,
+  ownerEmail?: string
+): Promise<number | null> => {
+  return postData(
+    token,
+    "https://festival.codemao.cn/yyb2019/index/checkTeacherFilter",
+    { name: ownerName }
+  ).then((data) => {
+    const { info = [] } = data;
+
+    // Means no same name
+    if (info.length === 1) {
+      return info[0].id;
+    }
+
+    // Means has same name
+    if (ownerEmail) {
+      for (let flag of info) {
+        if (flag.username === ownerEmail) {
+          return flag.id;
+        }
+      }
+    } else {
+      alert("可能存在同名归属人，请输入归属人邮箱");
+    }
+    return null;
+  });
 };
 
 /*
@@ -138,7 +169,7 @@ term_name: "8期"
 res: 'success'
 **
 */
-const getClassesData = (token: string, flagid: string) => {
+const getClassesData = (token: string, flagid: number) => {
   return postData(
     token,
     "https://festival.codemao.cn/yyb2019/index/toClassInfoFn",
@@ -162,14 +193,6 @@ const filterOutClassData = (
   return null;
 };
 
-const queryUserInfo = (token: string, name: string) => {
-  return postData(
-    token,
-    "https://festival.codemao.cn/yyb2019/index/checkTeacherFilter",
-    { name }
-  );
-};
-
 export const testHasAccess = async (token: string, userId: string) => {
   try {
     await getOrderDataByUser(token, userId, "", "");
@@ -186,31 +209,40 @@ export const getOrdersData = (
   token: string,
   toCheckIds: string[],
   workName: string,
-  owner: string
+  ownerName: string
 ) => {
   if (!toCheckIds.length) return [];
 
   return Promise.all(
-    toCheckIds.map((id) => getOrderDataByUser(token, id, workName, owner))
+    toCheckIds.map((id) => getOrderDataByUser(token, id, workName, ownerName))
   );
 };
 
 export const claimOrders = async (
   token: string,
+  notClaimedOrders: Order[],
   classInfo: string,
-  notClaimedOrders: Order[]
+  ownerName: string,
+  ownerEmail?: string
 ) => {
   if (notClaimedOrders.length === 0) return;
 
-  const flagid = await getFlagid(token);
-  const classesInfo = await getClassesData(token, flagid);
-  const classData = filterOutClassData(classInfo, classesInfo);
+  const flagid = await getFlagid(token, ownerName, ownerEmail);
 
-  if (!classData) return;
+  if (flagid) {
+    const classesInfo = await getClassesData(token, flagid);
+    const classData = filterOutClassData(classInfo, classesInfo);
 
-  return Promise.all(
-    notClaimedOrders.map((order) =>
-      claimOrder(token, order, flagid, classData, classInfo)
-    )
-  );
+    if (classData) {
+      return Promise.all(
+        notClaimedOrders.map((order) =>
+          claimOrder(token, order, flagid, classData, classInfo)
+        )
+      );
+    } else {
+      alert("未找到班期信息");
+    }
+  } else {
+    alert("请求归属人信息出错");
+  }
 };

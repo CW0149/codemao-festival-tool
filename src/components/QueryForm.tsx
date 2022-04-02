@@ -29,7 +29,7 @@ const QueryForm: FC<QueryFormProps> = ({
       alert("请输入用户ID");
       valid = false;
     }
-    if (!formData.owner) {
+    if (!formData.ownerName) {
       alert("请输入归属人");
       valid = false;
     }
@@ -88,7 +88,7 @@ eg.
             type="text"
             id="work_name"
             value={formData.workName}
-            onChange={(e) => modifyFormData("workName", e.target.value)}
+            onChange={(e) => modifyFormData("workName", e.target.value.trim())}
             placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
           />
         </label>
@@ -99,37 +99,46 @@ eg.
           <input
             type="text"
             id="flagid_name"
-            value={formData.owner}
-            onChange={(e) => modifyFormData("owner", e.target.value)}
-            width="200"
+            value={formData.ownerName}
+            onChange={(e) => modifyFormData("ownerName", e.target.value.trim())}
           />
         </label>
       </div>
       <div className="form_item">
+        <label>
+          <span>归属人邮箱</span>
+          <input
+            type="text"
+            value={formData.ownerEmail}
+            onChange={(e) =>
+              modifyFormData("ownerEmail", e.target.value.trim())
+            }
+            placeholder="可选，若归属人有重名必填"
+          />
+        </label>
+      </div>
+      <div className="form_item">
+        <label>
+          <span>归属班期</span>
+          <input
+            type="text"
+            width="200"
+            value={formData.classInfo}
+            onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
+          />
+        </label>
+      </div>
+      {/* <div className="form_item">
         <label>
           <span>token</span>
           <input
             type="text"
             id="token"
             value={formData.token}
-            onChange={(e) => modifyFormData("token", e.target.value)}
-            width="200"
+            onChange={(e) => modifyFormData("token", e.target.value.trim())}
           />
         </label>
-      </div>
-      <div className="form_item">
-        <label>
-          <span>班期</span>
-          <input
-            type="text"
-            id="classinfo"
-            width="200"
-            value={formData.classInfo}
-            onChange={(e) => modifyFormData("classInfo", e.target.value)}
-            placeholder="查询可选，领单必填"
-          />
-        </label>
-      </div>
+      </div> */}
       <div className="btns">
         <button id="query_btn" disabled={queryDisabled} onClick={queryHandler}>
           查询

@@ -21,7 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "bundle": "npx gulp"
+    "bundle": "npx gulp && cp build/index.html /Users/ruixuanhuang/Desktop/查询下单与领单.html"
   },
   "eslintConfig": {
     "extends": [
