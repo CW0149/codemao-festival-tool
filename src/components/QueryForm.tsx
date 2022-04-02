@@ -4,9 +4,16 @@ import { FormData, FormDataKey } from "../constants/types";
 
 type QueryFormProps = {
   onQueryOrder: (formData: FormData) => void;
-  onClaimOrder: (FormData: FormData) => any;
+  onClaimOrder: (FormData: FormData) => void;
+  queryDisabled: boolean;
+  claimDisabled: boolean;
 };
-const QueryForm: FC<QueryFormProps> = ({ onQueryOrder, onClaimOrder }) => {
+const QueryForm: FC<QueryFormProps> = ({
+  onQueryOrder,
+  onClaimOrder,
+  queryDisabled,
+  claimDisabled,
+}) => {
   const [formData, setFormData] = useState(MockedFormData);
 
   const modifyFormData = (key: FormDataKey, value: string) => {
@@ -124,11 +131,11 @@ eg.
         </label>
       </div>
       <div className="btns">
-        <button id="query_btn" onClick={queryHandler}>
+        <button id="query_btn" disabled={queryDisabled} onClick={queryHandler}>
           查询
         </button>
-        <button id="claim_btn" onClick={clickHandler}>
-          请确保上面信息准确-后果自负-查询并自动领单
+        <button id="claim_btn" disabled={claimDisabled} onClick={clickHandler}>
+          请确保上面信息准确-后果自负-自动领单
         </button>
       </div>
       <hr />

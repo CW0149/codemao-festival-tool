@@ -8,6 +8,7 @@ import { claimOrders, getOrdersData, testHasAccess } from "./helpers/requests";
 
 function App() {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
+  const [queryDisabled, setQueryDisabled] = useState(false);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -38,7 +39,14 @@ function App() {
     return orders;
   }, [claimedOrders, paidOrders]);
 
+  const claimDisabled = useMemo(
+    () => !notClaimedOrders.length,
+    [notClaimedOrders]
+  );
+
   const queryOrderHandler = async (formData: FormData) => {
+    setQueryDisabled(true);
+
     const hasAccess = await testHasAccess(formData.token, formData.ids[0]);
 
     if (hasAccess) {
@@ -52,11 +60,13 @@ function App() {
       );
       setOrdersData(ordersData);
     }
+
+    setQueryDisabled(false);
   };
 
   const claimOrderHandler = async (formData: FormData) => {
     if (!ordersData.length) {
-      await queryOrderHandler(formData);
+      alert("请先查询");
     }
 
     if (notClaimedOrders.length) {
@@ -86,6 +96,8 @@ function App() {
       <QueryForm
         onQueryOrder={queryOrderHandler}
         onClaimOrder={claimOrderHandler}
+        queryDisabled={queryDisabled}
+        claimDisabled={claimDisabled}
       />
       <Results
         ordersData={ordersData}
