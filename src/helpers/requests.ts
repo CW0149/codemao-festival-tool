@@ -1,4 +1,4 @@
-import { postData, getData } from ".";
+import { postFestivalData, getFestivalData } from ".";
 import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
 
 /**
@@ -8,7 +8,7 @@ import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
  */
 
 const queryOrder = (token: string, userId: string) => {
-  return postData(
+  return postFestivalData(
     token,
     "https://festival.codemao.cn/yyb2019/index/checkAddOrder",
     {
@@ -112,7 +112,7 @@ const claimOrder = (
     ...sendExtra,
   };
 
-  return postData(
+  return postFestivalData(
     token,
     "https://festival.codemao.cn/yyb2019/index/editOrder",
     toSend
@@ -120,9 +120,10 @@ const claimOrder = (
 };
 
 const getLoginFlagid = (token: string): Promise<number | null> => {
-  return getData(token, "https://festival.codemao.cn/yyb2019/index/info").then(
-    (res) => res?.info?.id ?? null
-  );
+  return getFestivalData(
+    token,
+    "https://festival.codemao.cn/yyb2019/index/info"
+  ).then((res) => res?.info?.id ?? null);
 };
 
 /**
@@ -138,7 +139,7 @@ tuan: 65
 username: "yanluxia@codemao.cn"
  */
 const getOwnerByName = (token: string, ownerName: string) => {
-  return postData(
+  return postFestivalData(
     token,
     "https://festival.codemao.cn/yyb2019/index/checkTeacherFilter",
     { name: ownerName }
@@ -164,7 +165,7 @@ export const getOwnerByEmail = (
   token: string,
   email?: string
 ): Promise<OwnerData> => {
-  return postData(
+  return postFestivalData(
     token,
     "https://festival.codemao.cn/yyb2019/index/checkAchievement",
     { teacher: email }
@@ -192,8 +193,8 @@ term_name: "8期"
 res: 'success'
 **
 */
-const getClassesData = (token: string, flagid: number) => {
-  return postData(
+export const getClassesData = (token: string, flagid: number) => {
+  return postFestivalData(
     token,
     "https://festival.codemao.cn/yyb2019/index/toClassInfoFn",
     {
@@ -250,8 +251,8 @@ export const claimOrders = async (
   if (notClaimedOrders.length === 0) return;
 
   const flagid = ownerData.id;
-  const classesInfo = await getClassesData(token, flagid);
-  const classData = filterOutClassData(classInfo, classesInfo);
+  const classesData = await getClassesData(token, flagid);
+  const classData = filterOutClassData(classInfo, classesData);
 
   if (classData) {
     return Promise.all(
@@ -263,3 +264,5 @@ export const claimOrders = async (
     throw Error("未找到班期信息");
   }
 };
+
+export const getClassesByTeacher = () => {};

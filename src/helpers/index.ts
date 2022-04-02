@@ -1,6 +1,6 @@
 import { ApiResponse } from "../constants/types";
 
-export const postData = (
+export const postFestivalData = (
   token: string,
   url: string,
   query: Record<string, unknown>
@@ -18,7 +18,10 @@ export const postData = (
   });
 };
 
-export const getData = (token: string, url: string): Promise<ApiResponse> => {
+export const getFestivalData = (
+  token: string,
+  url: string
+): Promise<ApiResponse> => {
   return fetch(url, {
     method: "GET",
     headers: {

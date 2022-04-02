@@ -1,5 +1,5 @@
 .App {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 .form_item {
   display: inline-block;
@@ -13,7 +13,7 @@ label > span {
   margin-right: 6px;
   text-align: right;
 }
-input, textarea {
+input, textarea, select {
   font-size: 14px;
   height: 36px;
   box-sizing: border-box;
@@ -31,6 +31,20 @@ input, textarea {
 }
 input:hover, textarea:hover {
   box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+}
+select {
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
+  border: 1px solid #dfdfdf;
+  border-radius: 2px;
+  margin-right: 2rem;
+  padding-right: 2rem;
 }
 button:hover {
   box-shadow: 0 2px 5px 1px rgba(90, 85, 92, 0.199);

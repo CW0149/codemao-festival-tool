@@ -98,14 +98,10 @@ function App() {
       <header className="App-header">
         <div className="tip">
           <p>
-            若要<em>查询</em>，请确保以下输入框信息准确
-            <br />
-            下单链接名称支持模糊查询
-          </p>
-          <p>
-            先查询再领单
-            <br />
-            <strong>归属人邮箱、归属班期会决定订单归属人和所属班期</strong>
+            <strong>
+              1. 输入用户ID、下单链接、归属人邮箱查询 &nbsp;&nbsp;2.
+              下单链接名称支持模糊匹配&nbsp;&nbsp;3. 先查询再领单
+            </strong>
           </p>
         </div>
       </header>

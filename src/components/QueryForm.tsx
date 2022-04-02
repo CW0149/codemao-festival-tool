@@ -1,7 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import { formData as MockedFormData } from "../mocks/formData";
-import { FormData, FormDataKey, OwnerData } from "../constants/types";
-import { getOwnerByEmail } from "../helpers/requests";
+import {
+  ClassData,
+  FormData,
+  FormDataKey,
+  OwnerData,
+} from "../constants/types";
+import { getClassesData, getOwnerByEmail } from "../helpers/requests";
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData, ownerData: OwnerData) => void;
@@ -17,11 +22,15 @@ const QueryForm: FC<QueryFormProps> = ({
 }) => {
   const [formData, setFormData] = useState(MockedFormData);
   const [ownerData, setOwnerData] = useState<OwnerData>();
+  const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
 
   useEffect(() => {
     try {
       getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
         setOwnerData(owner);
+        getClassesData(formData.token, owner.id).then((classesData) => {
+          setOwnerClassesData(classesData);
+        });
       });
     } catch (err) {
       alert(err);
@@ -79,7 +88,7 @@ const QueryForm: FC<QueryFormProps> = ({
             cols={30}
             rows={10}
             value={formData.ids}
-            onChange={(e) => modifyFormData("ids", e.target.value)}
+            onChange={(e) => modifyFormData("ids", e.target.value.trim())}
             placeholder="请粘贴入用户ID，ID用换行分隔
 eg.
 6540093
@@ -127,32 +136,33 @@ eg.
       </div>
       <div className="form_item">
         <label>
-          <span>归属班期</span>
-          <input
+          <span>设置归属班期</span>
+          <select
+            value={formData.classInfo}
+            onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
+          >
+            {ownerClassesData?.map((classData) => (
+              <option key={classData.class_id}>
+                {classData.package_name +
+                  classData.term_name +
+                  classData.class_name}
+              </option>
+            ))}
+          </select>
+          {/* <input
             type="text"
             width="200"
             value={formData.classInfo}
             onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
-          />
+          /> */}
         </label>
       </div>
-      {/* <div className="form_item">
-        <label>
-          <span>token</span>
-          <input
-            type="text"
-            id="token"
-            value={formData.token}
-            onChange={(e) => modifyFormData("token", e.target.value.trim())}
-          />
-        </label>
-      </div> */}
       <div className="btns">
         <button id="query_btn" disabled={queryDisabled} onClick={queryHandler}>
           查询
         </button>
         <button id="claim_btn" disabled={claimDisabled} onClick={clickHandler}>
-          自动领单-请确保上面信息准确
+          自动领单-请确保归属信息准确
         </button>
       </div>
       <hr />
