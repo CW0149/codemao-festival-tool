@@ -2,7 +2,13 @@ import React, { useMemo, useState } from "react";
 import "./App.css";
 import QueryForm from "./components/QueryForm";
 import Results from "./components/Results";
-import { FormData, Order, OrderData, ValidOrderData } from "./constants/types";
+import {
+  FormData,
+  Order,
+  OrderData,
+  OwnerData,
+  ValidOrderData,
+} from "./constants/types";
 import { linesStrToArr } from "./helpers";
 import { claimOrders, getOrdersData, testHasAccess } from "./helpers/requests";
 
@@ -44,7 +50,10 @@ function App() {
     [notClaimedOrders]
   );
 
-  const queryOrderHandler = async (formData: FormData) => {
+  const queryOrdersHandler = async (
+    formData: FormData,
+    ownerData: OwnerData
+  ) => {
     setQueryDisabled(true);
 
     const hasAccess = await testHasAccess(formData.token, formData.ids[0]);
@@ -56,7 +65,7 @@ function App() {
         formData.token,
         linesStrToArr(formData.ids),
         formData.workName,
-        formData.ownerName
+        ownerData.name
       );
       setOrdersData(ordersData);
     }
@@ -64,7 +73,10 @@ function App() {
     setQueryDisabled(false);
   };
 
-  const claimOrderHandler = async (formData: FormData) => {
+  const claimOrdersHandler = async (
+    formData: FormData,
+    ownerData: OwnerData
+  ) => {
     if (!ordersData.length) {
       alert("请先查询");
     }
@@ -74,10 +86,9 @@ function App() {
         formData.token,
         notClaimedOrders,
         formData.classInfo,
-        formData.ownerName,
-        formData.ownerEmail
+        ownerData
       );
-      await queryOrderHandler(formData);
+      await queryOrdersHandler(formData, ownerData);
       alert("已重新获取数据，也可以去系统查看验证");
     }
   };
@@ -87,20 +98,20 @@ function App() {
       <header className="App-header">
         <div className="tip">
           <p>
-            若要<em>查询</em>，请确保用户ID、项目链接名称、归属人准确
+            若要<em>查询</em>，请确保以下输入框信息准确
+            <br />
+            下单链接名称支持模糊查询
           </p>
           <p>
-            若要<em>自动领单</em>，请确保用户ID、项目链接名称准确，
+            先查询再领单
             <br />
-            <strong>归属人、归属班期会决定归属人和所属班期</strong>
-            <br />
-            归属人邮箱非必填，<strong>若公司存在归属人同名则必填</strong>
+            <strong>归属人邮箱、归属班期会决定订单归属人和所属班期</strong>
           </p>
         </div>
       </header>
       <QueryForm
-        onQueryOrder={queryOrderHandler}
-        onClaimOrder={claimOrderHandler}
+        onQueryOrders={queryOrdersHandler}
+        onClaimOrders={claimOrdersHandler}
         queryDisabled={queryDisabled}
         claimDisabled={claimDisabled}
       />

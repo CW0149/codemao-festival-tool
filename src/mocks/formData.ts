@@ -2,7 +2,6 @@ export const formData = {
   token:
     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJhdWQiOiIiLCJpYXQiOjE2NDg4ODcyOTQsIm5iZiI6MTY0ODg4NzI5NCwiZXhwIjoxNjQ5MTQ2NDk0LCJ1aWQiOjM5MTQsInRva2VuX2tleSI6IklUVTZDTG5EIn0.4nc3Ah8qLQ7F4JjnSOVorV8ZiV0XVMbNVIgEHUOpb70",
   workName: "【高阶】机器人高阶课-6期",
-  ownerName: "晏露瑕",
   classInfo: "编程猫机器人系统课8期A2",
   ownerEmail: "yanluxia@codemao.cn",
   ids: `

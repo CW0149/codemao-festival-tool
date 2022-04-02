@@ -1,5 +1,5 @@
 import { postData, getData } from ".";
-import { ClassData, Order, OrderData } from "../constants/types";
+import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
 
 /**
  *
@@ -125,34 +125,57 @@ const getLoginFlagid = (token: string): Promise<number | null> => {
   );
 };
 
-const getFlagid = (
-  token: string,
-  ownerName: string,
-  ownerEmail?: string
-): Promise<number | null> => {
+/**
+ * 
+ * @param token 
+ * @param ownerName 
+ * @returns info[]
+del: 0
+flag: 2
+id: 3914
+name: "晏露瑕"
+tuan: 65
+username: "yanluxia@codemao.cn"
+ */
+const getOwnerByName = (token: string, ownerName: string) => {
   return postData(
     token,
     "https://festival.codemao.cn/yyb2019/index/checkTeacherFilter",
     { name: ownerName }
-  ).then((data) => {
-    const { info = [] } = data;
+  );
+};
 
-    // Means no same name
+/**
+ *
+ * @param token
+ * @param email
+ * @returns info[]
+flag: 2
+group: 23
+id: 3914
+name: "晏露瑕"
+payinfo: 0
+payinfo2: 0
+payinfo3: 0
+tuan: 65
+username: "yanluxia@codemao.cn"
+ */
+export const getOwnerByEmail = (
+  token: string,
+  email?: string
+): Promise<OwnerData> => {
+  return postData(
+    token,
+    "https://festival.codemao.cn/yyb2019/index/checkAchievement",
+    { teacher: email }
+  ).then((res) => {
+    const { info } = res;
+
     if (info.length === 1) {
-      return info[0].id;
-    }
-
-    // Means has same name
-    if (ownerEmail) {
-      for (let flag of info) {
-        if (flag.username === ownerEmail) {
-          return flag.id;
-        }
-      }
+      return info[0];
     } else {
-      alert("可能存在同名归属人，请输入归属人邮箱");
+      throw Error("未找到归属人信息");
     }
-    return null;
   });
 };
 
@@ -222,27 +245,21 @@ export const claimOrders = async (
   token: string,
   notClaimedOrders: Order[],
   classInfo: string,
-  ownerName: string,
-  ownerEmail?: string
+  ownerData: OwnerData
 ) => {
   if (notClaimedOrders.length === 0) return;
 
-  const flagid = await getFlagid(token, ownerName, ownerEmail);
+  const flagid = ownerData.id;
+  const classesInfo = await getClassesData(token, flagid);
+  const classData = filterOutClassData(classInfo, classesInfo);
 
-  if (flagid) {
-    const classesInfo = await getClassesData(token, flagid);
-    const classData = filterOutClassData(classInfo, classesInfo);
-
-    if (classData) {
-      return Promise.all(
-        notClaimedOrders.map((order) =>
-          claimOrder(token, order, flagid, classData, classInfo)
-        )
-      );
-    } else {
-      alert("未找到班期信息");
-    }
+  if (classData) {
+    return Promise.all(
+      notClaimedOrders.map((order) =>
+        claimOrder(token, order, flagid, classData, classInfo)
+      )
+    );
   } else {
-    alert("请求归属人信息出错");
+    throw Error("未找到班期信息");
   }
 };

@@ -133,6 +133,14 @@ type ClassDataKeys =
   | "term_id"
   | "term_name";
 
+export type OwnerData = {
+  id: number;
+  name: string;
+  username: string; // email
+  tuan: number;
+  flag: number;
+  [key: string]: number | string | null;
+};
 export type Order = Record<Partial<OrderKeys>, any>;
 export type ValidOrderData = {
   order: Order;

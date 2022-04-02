@@ -1,20 +1,32 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { formData as MockedFormData } from "../mocks/formData";
-import { FormData, FormDataKey } from "../constants/types";
+import { FormData, FormDataKey, OwnerData } from "../constants/types";
+import { getOwnerByEmail } from "../helpers/requests";
 
 type QueryFormProps = {
-  onQueryOrder: (formData: FormData) => void;
-  onClaimOrder: (FormData: FormData) => void;
+  onQueryOrders: (formData: FormData, ownerData: OwnerData) => void;
+  onClaimOrders: (FormData: FormData, ownerData: OwnerData) => void;
   queryDisabled: boolean;
   claimDisabled: boolean;
 };
 const QueryForm: FC<QueryFormProps> = ({
-  onQueryOrder,
-  onClaimOrder,
+  onQueryOrders,
+  onClaimOrders,
   queryDisabled,
   claimDisabled,
 }) => {
   const [formData, setFormData] = useState(MockedFormData);
+  const [ownerData, setOwnerData] = useState<OwnerData>();
+
+  useEffect(() => {
+    try {
+      getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
+        setOwnerData(owner);
+      });
+    } catch (err) {
+      alert(err);
+    }
+  }, [formData.ownerEmail, formData.token]);
 
   const modifyFormData = (key: FormDataKey, value: string) => {
     setFormData((prevData) => {
@@ -27,10 +39,6 @@ const QueryForm: FC<QueryFormProps> = ({
 
     if (!formData.ids) {
       alert("请输入用户ID");
-      valid = false;
-    }
-    if (!formData.ownerName) {
-      alert("请输入归属人");
       valid = false;
     }
     if (!formData.token) {
@@ -49,14 +57,14 @@ const QueryForm: FC<QueryFormProps> = ({
   };
 
   const queryHandler = () => {
-    if (testValidData()) {
-      onQueryOrder(formData);
+    if (testValidData() && ownerData) {
+      onQueryOrders(formData, ownerData);
     }
   };
 
   const clickHandler = () => {
-    if (testValidData()) {
-      onClaimOrder(formData);
+    if (testValidData() && ownerData) {
+      onClaimOrders(formData, ownerData);
     }
   };
 
@@ -83,7 +91,7 @@ eg.
       </div>
       <div className="form_item">
         <label>
-          <span>项目链接名称</span>
+          <span>下单链接名称</span>
           <input
             type="text"
             id="work_name"
@@ -93,7 +101,7 @@ eg.
           />
         </label>
       </div>
-      <div className="form_item">
+      {/* <div className="form_item">
         <label>
           <span>归属人</span>
           <input
@@ -103,7 +111,7 @@ eg.
             onChange={(e) => modifyFormData("ownerName", e.target.value.trim())}
           />
         </label>
-      </div>
+      </div> */}
       <div className="form_item">
         <label>
           <span>归属人邮箱</span>
@@ -144,7 +152,7 @@ eg.
           查询
         </button>
         <button id="claim_btn" disabled={claimDisabled} onClick={clickHandler}>
-          请确保上面信息准确-后果自负-自动领单
+          自动领单-请确保上面信息准确
         </button>
       </div>
       <hr />
