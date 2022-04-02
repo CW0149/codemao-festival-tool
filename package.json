@@ -1,5 +1,5 @@
 {
-  "name": "handle-roders-app",
+  "name": "handle-order-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -25,7 +25,7 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "plugin:prettier/recommended"
     ]
   },
   "browserslist": {
@@ -39,5 +39,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "2.6.1"
   }
 }

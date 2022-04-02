@@ -1,38 +1,85 @@
 .App {
-  text-align: center;
+  
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.form_item {
+  display: inline-block;
+  margin-right: 20px;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+label > span {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 36px;
+  min-width: 100px;
+  margin-right: 6px;
+  text-align: right;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+input, textarea {
+  font-size: 14px;
+  height: 36px;
+  box-sizing: border-box;
+  width: 300px;
+  border: 1px solid rgb(222, 224, 224);
+  transition: border-color 0.2s ease 0s;
+  border-radius: 2px;
+  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+  color: rgb(63, 64, 64);
+  letter-spacing: 0.2px;
+  padding: 0px 12px;
+  line-height: normal;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+input:hover, textarea:hover {
+  box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+}
+button:hover {
+  box-shadow: 0 2px 5px 1px rgba(90, 85, 92, 0.199);
+}
+textarea {
+  height: auto;
+  max-height: 100px;
+}
+.columns {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+.columns > div {
+  flex: 1;
+}
+.btns {
+  margin-top: 10px;
+}
+button {
+  font-size: 14px;
+  line-height: 20px;
+  padding: 0px 20px;
+  margin: 0px;
+  height: 36px;
+  min-width: 112px;
+  font-weight: 400;
+  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+  border-radius: 2px;
+  letter-spacing: 0.4px;
+  box-shadow: none;
+  text-shadow: none;
+  text-transform: capitalize;
+  border: none;
+  cursor: pointer;
+  outline-offset: -5px;
   color: white;
+  background-color: rgb(0, 97, 223);
+  margin-right: 4px;
 }
-
-.App-link {
-  color: #61dafb;
+button:disabled {
+  background-color: #afafaf !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#claim_btn {
+  background-color: red;
+}
+strong {
+  color: red;
+}
+.tip {
+  text-align: center;
 }
