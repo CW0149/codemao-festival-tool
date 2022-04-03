@@ -72,9 +72,35 @@ img.avatar {
   height: 36px;
   vertical-align: middle;
 }
-hr {
-  margin-top: 10px;
+#btns > * {
+  margin-bottom: 10px;
 }
+hr {
+  margin-top: 0;
+}
+
 .results {
   height: calc(100vh - 210px);
+}
+
+@media screen and (max-width: 800px) {
+  .App label > span {
+    text-align: right;
+    width: 100px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .App input, .App select {
+    width: 100%;
+    margin-top: 0;
+  }
+  .App .form_item {
+    margin-right: 0;
+    display: block;
+  }
+  .App label > span {
+    text-align: center !important;
+    width: auto;
+  }
 }

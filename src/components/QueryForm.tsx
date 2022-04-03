@@ -115,22 +115,24 @@ const QueryForm: FC<QueryFormProps> = ({
       </div>
       <StyledDivider variant="middle" />
 
-      <Button
-        variant="contained"
-        disabled={queryDisabled}
-        onClick={queryHandler}
-        style={{ marginRight: "6px" }}
-      >
-        查询已购买{"|"}已领单
-      </Button>
-      <Button
-        variant="contained"
-        disabled={claimDisabled}
-        onClick={clickHandler}
-        color="error"
-      >
-        点我领单
-      </Button>
+      <div id="btns">
+        <Button
+          variant="contained"
+          disabled={queryDisabled}
+          onClick={queryHandler}
+          style={{ marginRight: "6px" }}
+        >
+          查询已购买{"|"}已领单
+        </Button>
+        <Button
+          variant="contained"
+          disabled={claimDisabled}
+          onClick={clickHandler}
+          color="error"
+        >
+          点我自动领单
+        </Button>
+      </div>
     </div>
   );
 };

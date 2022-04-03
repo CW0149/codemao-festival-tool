@@ -35,6 +35,10 @@ const StuTable: FC<StuTableProps> = ({
   const [rows, setRows] =
     useState<(Student & { paid?: string; claimed?: string })[]>(data);
 
+  /**
+   * Set's value will update every time this compo renders
+   * Use useMemo to prevent that
+   * */
   const paidUserIdsSet = useMemo(
     () => new Set(paidOrderUserIds.map((id) => String(id))),
     [paidOrderUserIds]
@@ -107,23 +111,16 @@ const StuTable: FC<StuTableProps> = ({
             orderBy={orderBy}
             headCells={[
               {
-                id: "user_id",
+                id: "nickname",
                 numeric: false,
-                disablePadding: true,
-                label: "用户ID",
-                align: "center",
+                disablePadding: false,
+                label: "昵称",
               },
               {
                 id: "child_name",
                 numeric: false,
                 disablePadding: false,
                 label: "学生",
-              },
-              {
-                id: "nickname",
-                numeric: false,
-                disablePadding: false,
-                label: "昵称",
               },
               ...(hasPaidOrders
                 ? [
@@ -161,6 +158,13 @@ const StuTable: FC<StuTableProps> = ({
                 align: "center",
               },
               {
+                id: "user_id",
+                numeric: false,
+                disablePadding: true,
+                label: "用户ID",
+                align: "center",
+              },
+              {
                 id: "follow_up_desc",
                 numeric: false,
                 disablePadding: false,
@@ -178,13 +182,12 @@ const StuTable: FC<StuTableProps> = ({
                   key={row.user_id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell>{row.user_id}</TableCell>
-                  <TableCell>{row.child_name}</TableCell>
                   <TableCell>
                     <img src={row.avatar_url} className="avatar" alt="avatar" />
                     &nbsp;
                     {row.nickname}
                   </TableCell>
+                  <TableCell>{row.child_name}</TableCell>
                   {hasPaidOrders && (
                     <TableCell align="center">
                       <span
@@ -209,6 +212,7 @@ const StuTable: FC<StuTableProps> = ({
                   )}
                   <TableCell align="right">{row.age}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
+                  <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.follow_up_desc}</TableCell>
                 </StyledTableRow>
               ))}
