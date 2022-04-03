@@ -1,7 +1,5 @@
-import { FESTIVAL_TOKEN } from "../constants/Credentials";
-
 export const formData = {
-  token: FESTIVAL_TOKEN,
+  token: process.env.REACT_APP_FESTIVAL_TOKEN,
   workName: "【高阶】机器人高阶课-6期",
   classInfo: "编程猫机器人系统课8期A2",
   ownerEmail: "yanluxia@codemao.cn",

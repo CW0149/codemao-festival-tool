@@ -55,6 +55,11 @@ function App() {
     ownerData: OwnerData,
     classStudents: Student[]
   ) => {
+    if (!formData.token) {
+      console.log("请设置token");
+      return;
+    }
+
     setQueryDisabled(true);
 
     const ids = classStudents.map((stu) => stu.user_id);
@@ -80,6 +85,11 @@ function App() {
     ownerData: OwnerData,
     classStudents: Student[]
   ) => {
+    if (!formData.token) {
+      console.log("请设置token");
+      return;
+    }
+
     if (!ordersData.length) {
       alert("请先查询");
     }

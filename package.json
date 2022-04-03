@@ -2,6 +2,7 @@
   "name": "handle-order-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
@@ -17,11 +18,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "dotenv react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "bundle": "npx gulp && cp build/index.html /Users/ruixuanhuang/Desktop/查询下单与领单.html"
+    "bundle": "source .env.local && npx gulp",
+    "deploy": "source .env.local && npm run build && rm -rf $DEPLOY_PATH && mv build $DEPLOY_PATH"
   },
   "eslintConfig": {
     "extends": [
@@ -42,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "dotenv-cli": "^5.1.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "gulp": "^4.0.2",

@@ -43,12 +43,16 @@ const QueryForm: FC<QueryFormProps> = ({
 
   useEffect(() => {
     try {
+      if (!formData.token) throw Error("请设置token");
+
       getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
         setOwnerData(owner);
-        getClassesData(formData.token, owner.id).then((classesData) => {
-          setOwnerClassesData(classesData);
-          setQueryDisabled(false);
-        });
+        getClassesData(formData.token as string, owner.id).then(
+          (classesData) => {
+            setOwnerClassesData(classesData);
+            setQueryDisabled(false);
+          }
+        );
       });
     } catch (err) {
       setQueryDisabled(true);
@@ -124,7 +128,7 @@ const QueryForm: FC<QueryFormProps> = ({
   };
 
   return (
-    <>
+    <div className="form_wrapper">
       <div className="form_item">
         <label>
           <span>下单链接名称</span>
@@ -176,7 +180,7 @@ const QueryForm: FC<QueryFormProps> = ({
         </button>
       </div>
       <hr />
-    </>
+    </div>
   );
 };
 
