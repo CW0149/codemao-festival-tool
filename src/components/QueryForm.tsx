@@ -1,4 +1,5 @@
-import { Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Button, Divider } from "@mui/material";
 import { FC, useEffect } from "react";
 import { ClassData, FormData, FormDataKey } from "../constants/types";
 import { classDataToClassInfo } from "../helpers";
@@ -74,19 +75,7 @@ const QueryForm: FC<QueryFormProps> = ({
     <div className="form_wrapper">
       <div className="form_item">
         <label>
-          <span>下单链接名称</span>
-          <input
-            type="text"
-            id="work_name"
-            value={formData.workName}
-            onChange={(e) => modifyFormData("workName", e.target.value.trim())}
-            placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
-          />
-        </label>
-      </div>
-      <div className="form_item">
-        <label>
-          <span>归属人邮箱</span>
+          <span>公司邮箱</span>
           <input
             type="text"
             value={formData.ownerEmail}
@@ -99,7 +88,7 @@ const QueryForm: FC<QueryFormProps> = ({
       </div>
       <div className="form_item">
         <label>
-          <span>归属班期</span>
+          <span>班期</span>
           <select
             value={formData.classInfo}
             onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
@@ -112,25 +101,42 @@ const QueryForm: FC<QueryFormProps> = ({
           </select>
         </label>
       </div>
-      <div className="btns">
-        <Button
-          variant="contained"
-          disabled={queryDisabled}
-          onClick={queryHandler}
-        >
-          查询购买与领单
-        </Button>
-        <Button
-          variant="contained"
-          disabled={claimDisabled}
-          onClick={clickHandler}
-          color="error"
-        >
-          点我领单-请确保归属信息准确
-        </Button>
+      <div className="form_item">
+        <label>
+          <span>项目链接名称</span>
+          <input
+            type="text"
+            id="work_name"
+            value={formData.workName}
+            onChange={(e) => modifyFormData("workName", e.target.value.trim())}
+            placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
+          />
+        </label>
       </div>
+      <StyledDivider variant="middle" />
+
+      <Button
+        variant="contained"
+        disabled={queryDisabled}
+        onClick={queryHandler}
+        style={{ marginRight: "6px" }}
+      >
+        查询已购买{"|"}已领单
+      </Button>
+      <Button
+        variant="contained"
+        disabled={claimDisabled}
+        onClick={clickHandler}
+        color="error"
+      >
+        点我领单
+      </Button>
     </div>
   );
 };
+
+const StyledDivider = styled(Divider)(() => ({
+  margin: "10px 0",
+}));
 
 export default QueryForm;

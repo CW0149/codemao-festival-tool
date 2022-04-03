@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Order, OrderData } from "../constants/types";
+import { Order, OrderData, Student } from "../constants/types";
 
 type SummaryProps = {
   ordersData: OrderData[];
@@ -7,6 +7,7 @@ type SummaryProps = {
   paidOrders: Order[];
   claimedOrders: Order[];
   classInfo: string;
+  classStudents: Student[];
 };
 const Summary: FC<SummaryProps> = ({
   ordersData = [],
@@ -14,10 +15,11 @@ const Summary: FC<SummaryProps> = ({
   paidOrders = [],
   claimedOrders = [],
   classInfo = "",
+  classStudents,
 }) => {
   return (
     <div style={{ marginBottom: "10px" }}>
-      {classInfo}
+      {classInfo}[总:{classStudents.length}人]
       {notClaimedOrders.length ? (
         <div>
           <strong>未认领用户信息：</strong>
@@ -29,7 +31,6 @@ const Summary: FC<SummaryProps> = ({
           <hr />
         </div>
       ) : null}
-
       {paidOrders.length > 0 ? (
         <span>
           &nbsp; [已购买: {paidOrders.length}人 /&nbsp;

@@ -173,16 +173,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div className="tip">
-          <p>
-            <strong>
-              输入下单链接、归属人邮箱查询已下单和已认领 ｜
-              下单链接名称支持模糊匹配 ｜ 先查询再领单
-            </strong>
-          </p>
-        </div>
-      </header>
+      <header className="App-header"></header>
       <QueryForm
         onQueryOrders={queryOrdersHandler}
         onClaimOrders={claimOrdersHandler}
@@ -201,6 +192,7 @@ function App() {
           claimedOrders={claimedOrders}
           paidOrders={paidOrders}
           classInfo={formData.classInfo}
+          classStudents={classStudents}
         />
         <StuTable
           data={classStudents}

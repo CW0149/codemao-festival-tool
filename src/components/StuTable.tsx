@@ -52,11 +52,10 @@ const StuTable: FC<StuTableProps> = ({
               <TableCell>用户ID</TableCell>
               <TableCell align="left">学生</TableCell>
               <TableCell align="left">昵称</TableCell>
-              <TableCell align="center">年龄</TableCell>
-              <TableCell align="center">电话</TableCell>
               {hasPaidOrders && <TableCell align="center">已购买</TableCell>}
               {hasClaimedOrders && <TableCell align="center">已领单</TableCell>}
-
+              <TableCell align="center">年龄</TableCell>
+              <TableCell align="center">电话</TableCell>
               <TableCell align="center">描述</TableCell>
             </TableRow>
           </TableHead>
@@ -73,8 +72,6 @@ const StuTable: FC<StuTableProps> = ({
                   &nbsp;
                   {stu.nickname}
                 </TableCell>
-                <TableCell>{stu.age}</TableCell>
-                <TableCell>{stu.phone_number}</TableCell>
                 {hasPaidOrders && (
                   <TableCell align="center">
                     <span
@@ -105,6 +102,8 @@ const StuTable: FC<StuTableProps> = ({
                     </span>
                   </TableCell>
                 )}
+                <TableCell>{stu.age}</TableCell>
+                <TableCell>{stu.phone_number}</TableCell>
                 <TableCell>{stu.follow_up_desc}</TableCell>
               </StyledTableRow>
             ))}
