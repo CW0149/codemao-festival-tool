@@ -1,5 +1,7 @@
 .App {
   padding: 0 20px 20px 20px;
+  color: #333;
+  font-family: "Open Sans",Helvetica,Arial,sans-serif;
 }
 .form_item {
   display: inline-block;
@@ -46,9 +48,6 @@ select {
   margin-right: 2rem;
   padding-right: 2rem;
 }
-button:hover {
-  box-shadow: 0 2px 5px 1px rgba(90, 85, 92, 0.199);
-}
 textarea {
   height: auto;
   max-height: 100px;
@@ -63,36 +62,10 @@ textarea {
   margin-top: 10px;
   display: inline-block;
 }
-button {
-  font-size: 14px;
-  line-height: 20px;
-  padding: 0px 20px;
-  margin: 0px;
-  height: 36px;
-  min-width: 112px;
-  font-weight: 400;
-  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-  border-radius: 2px;
-  letter-spacing: 0.4px;
-  box-shadow: none;
-  text-shadow: none;
-  text-transform: capitalize;
-  border: none;
-  cursor: pointer;
-  outline-offset: -5px;
-  color: white;
-  background-color: rgb(0, 97, 223);
-  margin-right: 6px;
-  margin-bottom: 6px;
+.btns button {
+  margin-right: 6px;;
 }
-button:disabled {
-  background-color: #afafaf !important;
-  cursor: not-allowed;
-  box-shadow: none !important;
-}
-#claim_btn {
-  background-color: red;
-}
+
 strong {
   color: red;
 }
@@ -103,4 +76,13 @@ strong {
   max-width: 960px;
   text-align: center;
   margin: 0 auto;
+}
+
+img.avatar {
+  width: 36px;
+  height: 36px;
+  vertical-align: middle;
+}
+.results {
+  height: calc(100vh - 210px);
 }

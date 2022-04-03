@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { FC } from "react";
 import { ClassData, FormData, FormDataKey } from "../constants/types";
 
@@ -100,14 +101,22 @@ const QueryForm: FC<QueryFormProps> = ({
         </label>
       </div>
       <div className="btns">
-        <button id="query_btn" disabled={queryDisabled} onClick={queryHandler}>
+        <Button
+          variant="contained"
+          disabled={queryDisabled}
+          onClick={queryHandler}
+        >
           查询
-        </button>
-        <button id="claim_btn" disabled={claimDisabled} onClick={clickHandler}>
+        </Button>
+        <Button
+          variant="contained"
+          disabled={claimDisabled}
+          onClick={clickHandler}
+          color="error"
+        >
           点我领单-请确保归属信息准确
-        </button>
+        </Button>
       </div>
-      <hr />
     </div>
   );
 };

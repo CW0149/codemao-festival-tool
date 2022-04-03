@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import QueryForm from "./components/QueryForm";
-import Results from "./components/Results";
+import Summary from "./components/Summary";
+import StuTable from "./components/StuTable";
 import {
   ClassData,
   FormData,
@@ -38,16 +39,23 @@ function App() {
     () => paidOrdersData.map((data) => data.order),
     [paidOrdersData]
   );
+  const paidOrderUserIds = useMemo(
+    () => paidOrders.map((order) => order.user_id),
+    [paidOrders]
+  );
 
   const claimedOrders: Order[] = useMemo(
     () =>
       paidOrdersData.filter((data) => data.claimed).map((data) => data.order),
     [paidOrdersData]
   );
+  const claimedOrderUserIds = useMemo(
+    () => claimedOrders.map((order) => order.user_id),
+    [claimedOrders]
+  );
   const notClaimedOrders: Order[] = useMemo(() => {
     const orders = [];
-    const claimedIds = claimedOrders.map((order) => order.user_id);
-    const claimedIdSet = new Set(claimedIds);
+    const claimedIdSet = new Set(claimedOrderUserIds);
 
     for (let paid of paidOrders) {
       if (!claimedIdSet.has(paid.user_id)) {
@@ -55,7 +63,7 @@ function App() {
       }
     }
     return orders;
-  }, [claimedOrders, paidOrders]);
+  }, [claimedOrderUserIds, paidOrders]);
 
   const claimDisabled = useMemo(
     () => !notClaimedOrders.length,
@@ -183,12 +191,21 @@ function App() {
         setFormData={setFormData}
         ownerClassesData={ownerClassesData}
       />
-      <Results
-        ordersData={ordersData}
-        notClaimedOrders={notClaimedOrders}
-        claimedOrders={claimedOrders}
-        paidOrders={paidOrders}
-      />
+      <hr />
+
+      <div className="results">
+        <Summary
+          ordersData={ordersData}
+          notClaimedOrders={notClaimedOrders}
+          claimedOrders={claimedOrders}
+          paidOrders={paidOrders}
+        />
+        <StuTable
+          data={classStudents}
+          paidOrderUserIds={paidOrderUserIds}
+          claimedOrderUserIds={claimedOrderUserIds}
+        />
+      </div>
     </div>
   );
 }
