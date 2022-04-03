@@ -1,4 +1,4 @@
-import { postFestivalData, getFestivalData } from ".";
+import { postFestivalData, getFestivalData, postCrmData } from ".";
 import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
 
 /**
@@ -204,10 +204,12 @@ export const getClassesData = (token: string, flagid: number) => {
   ).then((res) => res.data ?? []);
 };
 
-const filterOutClassData = (
+export const filterOutClassData = (
   classInfo: string,
-  classesData: ClassData[]
+  classesData?: ClassData[]
 ): ClassData | null => {
+  if (!classesData) return null;
+
   for (let classData of classesData) {
     const { package_name, term_name, class_name } = classData;
     if (package_name + term_name + class_name === classInfo) {
@@ -265,4 +267,9 @@ export const claimOrders = async (
   }
 };
 
-export const getClassesByTeacher = () => {};
+export const getStudentsByClass = (classId: number, termId: number) => {
+  return postCrmData("http://42.194.164.225:3000/class/students", {
+    class_id: classId,
+    term_id: termId,
+  }).then((data) => data.items);
+};

@@ -5,12 +5,27 @@ import {
   FormData,
   FormDataKey,
   OwnerData,
+  Student,
 } from "../constants/types";
-import { getClassesData, getOwnerByEmail } from "../helpers/requests";
+import {
+  filterOutClassData,
+  getClassesData,
+  getOwnerByEmail,
+  getStudentsByClass,
+} from "../helpers/requests";
 
 type QueryFormProps = {
-  onQueryOrders: (formData: FormData, ownerData: OwnerData) => void;
-  onClaimOrders: (FormData: FormData, ownerData: OwnerData) => void;
+  onQueryOrders: (
+    formData: FormData,
+    ownerData: OwnerData,
+    classStudents: Student[]
+  ) => void;
+  onClaimOrders: (
+    FormData: FormData,
+    ownerData: OwnerData,
+    classStudents: Student[]
+  ) => void;
+  setQueryDisabled: (disabled: boolean) => void;
   queryDisabled: boolean;
   claimDisabled: boolean;
 };
@@ -19,10 +34,12 @@ const QueryForm: FC<QueryFormProps> = ({
   onClaimOrders,
   queryDisabled,
   claimDisabled,
+  setQueryDisabled,
 }) => {
   const [formData, setFormData] = useState(MockedFormData);
   const [ownerData, setOwnerData] = useState<OwnerData>();
   const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
+  const [classStudents, setClassStudents] = useState([]);
 
   useEffect(() => {
     try {
@@ -30,12 +47,45 @@ const QueryForm: FC<QueryFormProps> = ({
         setOwnerData(owner);
         getClassesData(formData.token, owner.id).then((classesData) => {
           setOwnerClassesData(classesData);
+          setQueryDisabled(false);
         });
       });
     } catch (err) {
+      setQueryDisabled(true);
       alert(err);
     }
-  }, [formData.ownerEmail, formData.token]);
+  }, [formData.ownerEmail, formData.token, setQueryDisabled]);
+
+  useEffect(() => {
+    try {
+      setQueryDisabled(true);
+      if (!ownerClassesData?.length) return;
+
+      const classData = filterOutClassData(
+        formData.classInfo,
+        ownerClassesData
+      );
+      if (!classData) {
+        return;
+      }
+
+      getStudentsByClass(classData.class_id, classData.term_id)
+        .then((classStudents) => {
+          setClassStudents(classStudents);
+
+          if (!classStudents.length) {
+            throw Error("未获取到学生列表，请重试或刷新页面");
+          }
+
+          setQueryDisabled(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      alert(err);
+    }
+  }, [formData.classInfo, ownerClassesData, setQueryDisabled]);
 
   const modifyFormData = (key: FormDataKey, value: string) => {
     setFormData((prevData) => {
@@ -46,10 +96,6 @@ const QueryForm: FC<QueryFormProps> = ({
   const testValidData = () => {
     let valid = true;
 
-    if (!formData.ids) {
-      alert("请输入用户ID");
-      valid = false;
-    }
     if (!formData.token) {
       alert("请输入token");
       valid = false;
@@ -67,37 +113,18 @@ const QueryForm: FC<QueryFormProps> = ({
 
   const queryHandler = () => {
     if (testValidData() && ownerData) {
-      onQueryOrders(formData, ownerData);
+      onQueryOrders(formData, ownerData, classStudents);
     }
   };
 
   const clickHandler = () => {
     if (testValidData() && ownerData) {
-      onClaimOrders(formData, ownerData);
+      onClaimOrders(formData, ownerData, classStudents);
     }
   };
 
   return (
     <>
-      <div>
-        <label>
-          <span>用户ID</span>
-          <textarea
-            name="用户ID"
-            id="user_ids"
-            cols={30}
-            rows={10}
-            value={formData.ids}
-            onChange={(e) => modifyFormData("ids", e.target.value.trim())}
-            placeholder="请粘贴入用户ID，ID用换行分隔
-eg.
-6540093
-17436072
-13298232
-"
-          />
-        </label>
-      </div>
       <div className="form_item">
         <label>
           <span>下单链接名称</span>
@@ -110,17 +137,6 @@ eg.
           />
         </label>
       </div>
-      {/* <div className="form_item">
-        <label>
-          <span>归属人</span>
-          <input
-            type="text"
-            id="flagid_name"
-            value={formData.ownerName}
-            onChange={(e) => modifyFormData("ownerName", e.target.value.trim())}
-          />
-        </label>
-      </div> */}
       <div className="form_item">
         <label>
           <span>归属人邮箱</span>
@@ -149,12 +165,6 @@ eg.
               </option>
             ))}
           </select>
-          {/* <input
-            type="text"
-            width="200"
-            value={formData.classInfo}
-            onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
-          /> */}
         </label>
       </div>
       <div className="btns">
@@ -162,7 +172,7 @@ eg.
           查询
         </button>
         <button id="claim_btn" disabled={claimDisabled} onClick={clickHandler}>
-          自动领单-请确保归属信息准确
+          点我领单-请确保归属信息准确
         </button>
       </div>
       <hr />

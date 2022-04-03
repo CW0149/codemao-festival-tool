@@ -132,6 +132,36 @@ type ClassDataKeys =
   | "package_name"
   | "term_id"
   | "term_name";
+type StudentKeys =
+  | "course_name"
+  | "course_number"
+  | "unlock_time"
+  | "user_id"
+  | "nickname"
+  | "child_name"
+  | "avatar_url"
+  | "sex"
+  | "age"
+  | "phone_number"
+  | "follow_up_desc"
+  | "imageUrl"
+  | "viewing_time"
+  | "n_finish"
+  | "n_open"
+  | "point"
+  | "package_point"
+  | "n_upload_video"
+  | "n_complete_work"
+  | "course_id"
+  | "package_id"
+  | "term_id"
+  | "class_id"
+  | "follow_states"
+  | "n_answer_in_class"
+  | "n_answer_after_class"
+  | "duration_in_class"
+  | "renew_state"
+  | "n_weekly_test";
 
 export type OwnerData = {
   id: number;
@@ -149,6 +179,7 @@ export type ValidOrderData = {
 };
 export type OrderData = ValidOrderData | null;
 export type ClassData = Record<Partial<ClassDataKeys>, any>;
+export type Student = Record<Partial<StudentKeys>, any>;
 
 export type FormData = typeof formData;
 export type FormDataKey = keyof FormData;

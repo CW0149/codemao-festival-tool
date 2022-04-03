@@ -7,14 +7,14 @@ import {
   Order,
   OrderData,
   OwnerData,
+  Student,
   ValidOrderData,
 } from "./constants/types";
-import { linesStrToArr } from "./helpers";
 import { claimOrders, getOrdersData, testHasAccess } from "./helpers/requests";
 
 function App() {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
-  const [queryDisabled, setQueryDisabled] = useState(false);
+  const [queryDisabled, setQueryDisabled] = useState(true);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -52,18 +52,20 @@ function App() {
 
   const queryOrdersHandler = async (
     formData: FormData,
-    ownerData: OwnerData
+    ownerData: OwnerData,
+    classStudents: Student[]
   ) => {
     setQueryDisabled(true);
 
-    const hasAccess = await testHasAccess(formData.token, formData.ids[0]);
+    const ids = classStudents.map((stu) => stu.user_id);
+    const hasAccess = await testHasAccess(formData.token, ids[0]);
 
     if (hasAccess) {
       setOrdersData([]);
 
       const ordersData = await getOrdersData(
         formData.token,
-        linesStrToArr(formData.ids),
+        ids,
         formData.workName,
         ownerData.name
       );
@@ -75,7 +77,8 @@ function App() {
 
   const claimOrdersHandler = async (
     formData: FormData,
-    ownerData: OwnerData
+    ownerData: OwnerData,
+    classStudents: Student[]
   ) => {
     if (!ordersData.length) {
       alert("请先查询");
@@ -88,7 +91,7 @@ function App() {
         formData.classInfo,
         ownerData
       );
-      await queryOrdersHandler(formData, ownerData);
+      await queryOrdersHandler(formData, ownerData, classStudents);
       alert("已重新获取数据，也可以去系统查看验证");
     }
   };
@@ -99,8 +102,8 @@ function App() {
         <div className="tip">
           <p>
             <strong>
-              1. 输入用户ID、下单链接、归属人邮箱查询 &nbsp;&nbsp;2.
-              下单链接名称支持模糊匹配&nbsp;&nbsp;3. 先查询再领单
+              输入下单链接、归属人邮箱查询已下单和已认领 ｜
+              下单链接名称支持模糊匹配 ｜ 先查询再领单
             </strong>
           </p>
         </div>
@@ -110,6 +113,7 @@ function App() {
         onClaimOrders={claimOrdersHandler}
         queryDisabled={queryDisabled}
         claimDisabled={claimDisabled}
+        setQueryDisabled={setQueryDisabled}
       />
       <Results
         ordersData={ordersData}

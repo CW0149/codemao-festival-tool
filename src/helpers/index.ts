@@ -34,6 +34,20 @@ export const getFestivalData = (
   });
 };
 
+export const postCrmData = (url: string, data: Record<string, any>) => {
+  return fetch(url, {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/plain, */*",
+    },
+    body: JSON.stringify(data),
+  }).then((res) => {
+    return res.json();
+  });
+};
+
 export const linesStrToArr = (linesStr: string): string[] => {
   return linesStr
     .split("\n")
