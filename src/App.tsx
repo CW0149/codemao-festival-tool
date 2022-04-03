@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import QueryForm from "./components/QueryForm";
 import Results from "./components/Results";
 import {
+  ClassData,
   FormData,
   Order,
   OrderData,
@@ -10,17 +11,29 @@ import {
   Student,
   ValidOrderData,
 } from "./constants/types";
-import { claimOrders, getOrdersData, testHasAccess } from "./helpers/requests";
-
+import {
+  claimOrders,
+  filterOutClassData,
+  getClassesData,
+  getOrdersData,
+  getOwnerByEmail,
+  getStudentsByClass,
+  testHasAccess,
+} from "./helpers/requests";
+import { formData as MockedFormData } from "./mocks/formData";
 function App() {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
   const [queryDisabled, setQueryDisabled] = useState(true);
+
+  const [formData, setFormData] = useState<FormData>(MockedFormData);
+  const [ownerData, setOwnerData] = useState<OwnerData>();
+  const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
+  const [classStudents, setClassStudents] = useState<Student[]>([]);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
     [ordersData]
   );
-
   const paidOrders: Order[] = useMemo(
     () => paidOrdersData.map((data) => data.order),
     [paidOrdersData]
@@ -31,7 +44,6 @@ function App() {
       paidOrdersData.filter((data) => data.claimed).map((data) => data.order),
     [paidOrdersData]
   );
-
   const notClaimedOrders: Order[] = useMemo(() => {
     const orders = [];
     const claimedIds = claimedOrders.map((order) => order.user_id);
@@ -50,15 +62,62 @@ function App() {
     [notClaimedOrders]
   );
 
-  const queryOrdersHandler = async (
-    formData: FormData,
-    ownerData: OwnerData,
-    classStudents: Student[]
-  ) => {
+  useEffect(() => {
+    try {
+      if (!formData.token) throw Error("请设置token");
+
+      getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
+        setOwnerData(owner);
+        getClassesData(formData.token as string, owner.id).then(
+          (classesData) => {
+            setOwnerClassesData(classesData);
+            setQueryDisabled(false);
+          }
+        );
+      });
+    } catch (err) {
+      setQueryDisabled(true);
+      alert(err);
+    }
+  }, [formData.ownerEmail, formData.token, setQueryDisabled]);
+
+  useEffect(() => {
+    try {
+      setQueryDisabled(true);
+      if (!ownerClassesData?.length) return;
+
+      const classData = filterOutClassData(
+        formData.classInfo,
+        ownerClassesData
+      );
+      if (!classData) {
+        return;
+      }
+
+      getStudentsByClass(classData.class_id, classData.term_id)
+        .then((classStudents) => {
+          setClassStudents(classStudents);
+
+          if (!classStudents.length) {
+            throw Error("未获取到学生列表，请重试或刷新页面");
+          }
+
+          setQueryDisabled(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      alert(err);
+    }
+  }, [formData.classInfo, ownerClassesData, setQueryDisabled]);
+
+  const queryOrdersHandler = async (formData: FormData) => {
     if (!formData.token) {
       console.log("请设置token");
       return;
     }
+    if (!classStudents.length || !ownerData) return;
 
     setQueryDisabled(true);
 
@@ -80,15 +139,12 @@ function App() {
     setQueryDisabled(false);
   };
 
-  const claimOrdersHandler = async (
-    formData: FormData,
-    ownerData: OwnerData,
-    classStudents: Student[]
-  ) => {
+  const claimOrdersHandler = async (formData: FormData) => {
     if (!formData.token) {
       console.log("请设置token");
       return;
     }
+    if (!ownerData) return;
 
     if (!ordersData.length) {
       alert("请先查询");
@@ -101,7 +157,7 @@ function App() {
         formData.classInfo,
         ownerData
       );
-      await queryOrdersHandler(formData, ownerData, classStudents);
+      await queryOrdersHandler(formData);
       alert("已重新获取数据，也可以去系统查看验证");
     }
   };
@@ -123,7 +179,9 @@ function App() {
         onClaimOrders={claimOrdersHandler}
         queryDisabled={queryDisabled}
         claimDisabled={claimDisabled}
-        setQueryDisabled={setQueryDisabled}
+        formData={formData}
+        setFormData={setFormData}
+        ownerClassesData={ownerClassesData}
       />
       <Results
         ordersData={ordersData}

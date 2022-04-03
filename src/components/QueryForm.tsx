@@ -1,96 +1,24 @@
-import React, { FC, useEffect, useState } from "react";
-import { formData as MockedFormData } from "../mocks/formData";
-import {
-  ClassData,
-  FormData,
-  FormDataKey,
-  OwnerData,
-  Student,
-} from "../constants/types";
-import {
-  filterOutClassData,
-  getClassesData,
-  getOwnerByEmail,
-  getStudentsByClass,
-} from "../helpers/requests";
+import { FC } from "react";
+import { ClassData, FormData, FormDataKey } from "../constants/types";
 
 type QueryFormProps = {
-  onQueryOrders: (
-    formData: FormData,
-    ownerData: OwnerData,
-    classStudents: Student[]
-  ) => void;
-  onClaimOrders: (
-    FormData: FormData,
-    ownerData: OwnerData,
-    classStudents: Student[]
-  ) => void;
-  setQueryDisabled: (disabled: boolean) => void;
+  onQueryOrders: (formData: FormData) => void;
+  onClaimOrders: (FormData: FormData) => void;
+  setFormData: (callback: (newData: FormData) => FormData) => void;
   queryDisabled: boolean;
   claimDisabled: boolean;
+  formData: FormData;
+  ownerClassesData?: ClassData[];
 };
 const QueryForm: FC<QueryFormProps> = ({
   onQueryOrders,
   onClaimOrders,
   queryDisabled,
   claimDisabled,
-  setQueryDisabled,
+  setFormData,
+  formData,
+  ownerClassesData,
 }) => {
-  const [formData, setFormData] = useState(MockedFormData);
-  const [ownerData, setOwnerData] = useState<OwnerData>();
-  const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
-  const [classStudents, setClassStudents] = useState([]);
-
-  useEffect(() => {
-    try {
-      if (!formData.token) throw Error("请设置token");
-
-      getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
-        setOwnerData(owner);
-        getClassesData(formData.token as string, owner.id).then(
-          (classesData) => {
-            setOwnerClassesData(classesData);
-            setQueryDisabled(false);
-          }
-        );
-      });
-    } catch (err) {
-      setQueryDisabled(true);
-      alert(err);
-    }
-  }, [formData.ownerEmail, formData.token, setQueryDisabled]);
-
-  useEffect(() => {
-    try {
-      setQueryDisabled(true);
-      if (!ownerClassesData?.length) return;
-
-      const classData = filterOutClassData(
-        formData.classInfo,
-        ownerClassesData
-      );
-      if (!classData) {
-        return;
-      }
-
-      getStudentsByClass(classData.class_id, classData.term_id)
-        .then((classStudents) => {
-          setClassStudents(classStudents);
-
-          if (!classStudents.length) {
-            throw Error("未获取到学生列表，请重试或刷新页面");
-          }
-
-          setQueryDisabled(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (err) {
-      alert(err);
-    }
-  }, [formData.classInfo, ownerClassesData, setQueryDisabled]);
-
   const modifyFormData = (key: FormDataKey, value: string) => {
     setFormData((prevData) => {
       return { ...prevData, [key]: value };
@@ -116,14 +44,14 @@ const QueryForm: FC<QueryFormProps> = ({
   };
 
   const queryHandler = () => {
-    if (testValidData() && ownerData) {
-      onQueryOrders(formData, ownerData, classStudents);
+    if (testValidData()) {
+      onQueryOrders(formData);
     }
   };
 
   const clickHandler = () => {
-    if (testValidData() && ownerData) {
-      onClaimOrders(formData, ownerData, classStudents);
+    if (testValidData()) {
+      onClaimOrders(formData);
     }
   };
 
