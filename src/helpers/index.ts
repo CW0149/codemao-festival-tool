@@ -1,4 +1,4 @@
-import { ApiResponse } from "../constants/types";
+import { ApiResponse, ClassData } from "../constants/types";
 
 export const postFestivalData = (
   token: string,
@@ -53,4 +53,10 @@ export const linesStrToArr = (linesStr: string): string[] => {
     .split("\n")
     .filter((id) => !!id)
     .map((id) => id.trim());
+};
+
+export const classDataToClassInfo = (classData: ClassData) => {
+  const { package_name, term_name, class_name } = classData;
+
+  return package_name + term_name + class_name;
 };

@@ -80,6 +80,7 @@ function App() {
           (classesData) => {
             setOwnerClassesData(classesData);
             setQueryDisabled(false);
+            setOrdersData([]);
           }
         );
       });
@@ -199,6 +200,7 @@ function App() {
           notClaimedOrders={notClaimedOrders}
           claimedOrders={claimedOrders}
           paidOrders={paidOrders}
+          classInfo={formData.classInfo}
         />
         <StuTable
           data={classStudents}

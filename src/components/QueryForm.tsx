@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { ClassData, FormData, FormDataKey } from "../constants/types";
+import { classDataToClassInfo } from "../helpers";
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
@@ -20,6 +21,19 @@ const QueryForm: FC<QueryFormProps> = ({
   formData,
   ownerClassesData,
 }) => {
+  useEffect(() => {
+    if (!ownerClassesData?.length) return;
+
+    if (
+      !ownerClassesData.find(
+        (classData) => classDataToClassInfo(classData) === formData.classInfo
+      )
+    ) {
+      modifyFormData("classInfo", classDataToClassInfo(ownerClassesData?.[0]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownerClassesData]);
+
   const modifyFormData = (key: FormDataKey, value: string) => {
     setFormData((prevData) => {
       return { ...prevData, [key]: value };
@@ -85,16 +99,14 @@ const QueryForm: FC<QueryFormProps> = ({
       </div>
       <div className="form_item">
         <label>
-          <span>设置归属班期</span>
+          <span>归属班期</span>
           <select
             value={formData.classInfo}
             onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
           >
             {ownerClassesData?.map((classData) => (
               <option key={classData.class_id}>
-                {classData.package_name +
-                  classData.term_name +
-                  classData.class_name}
+                {classDataToClassInfo(classData)}
               </option>
             ))}
           </select>
@@ -106,7 +118,7 @@ const QueryForm: FC<QueryFormProps> = ({
           disabled={queryDisabled}
           onClick={queryHandler}
         >
-          查询
+          查询购买与领单
         </Button>
         <Button
           variant="contained"

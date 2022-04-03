@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Order, OrderData } from "../constants/types";
 
 type SummaryProps = {
@@ -6,17 +6,18 @@ type SummaryProps = {
   notClaimedOrders: Order[];
   paidOrders: Order[];
   claimedOrders: Order[];
+  classInfo: string;
 };
 const Summary: FC<SummaryProps> = ({
   ordersData = [],
   notClaimedOrders = [],
   paidOrders = [],
   claimedOrders = [],
+  classInfo = "",
 }) => {
-  if (ordersData.length === 0) return null;
-
   return (
     <div style={{ marginBottom: "10px" }}>
+      {classInfo}
       {notClaimedOrders.length ? (
         <div>
           <strong>未认领用户信息：</strong>
@@ -29,9 +30,9 @@ const Summary: FC<SummaryProps> = ({
         </div>
       ) : null}
 
-      <div className="columns">
-        <div>
-          [已购买: {paidOrders.length}人 /&nbsp;
+      {paidOrders.length > 0 ? (
+        <span>
+          &nbsp; [已购买: {paidOrders.length}人 /&nbsp;
           <strong>
             续费率：
             {ordersData.length &&
@@ -41,8 +42,8 @@ const Summary: FC<SummaryProps> = ({
             %
           </strong>
           ] &nbsp; [已认领: {claimedOrders.length}人]
-        </div>
-      </div>
+        </span>
+      ) : null}
     </div>
   );
 };

@@ -1,4 +1,9 @@
-import { postFestivalData, getFestivalData, postCrmData } from ".";
+import {
+  postFestivalData,
+  getFestivalData,
+  postCrmData,
+  classDataToClassInfo,
+} from ".";
 import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
 
 /**
@@ -211,8 +216,7 @@ export const filterOutClassData = (
   if (!classesData) return null;
 
   for (let classData of classesData) {
-    const { package_name, term_name, class_name } = classData;
-    if (package_name + term_name + class_name === classInfo) {
+    if (classDataToClassInfo(classData) === classInfo) {
       return classData;
     }
   }
