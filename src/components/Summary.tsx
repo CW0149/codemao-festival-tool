@@ -15,7 +15,7 @@ const Summary: FC<SummaryProps> = ({
   paidOrders = [],
   claimedOrders = [],
   classInfo = "",
-  classStudents,
+  classStudents = [],
 }) => {
   return (
     <div style={{ marginBottom: "10px" }}>

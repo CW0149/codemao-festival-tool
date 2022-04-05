@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import QueryForm from "./components/QueryForm";
 import Summary from "./components/Summary";
@@ -22,7 +22,8 @@ import {
   testHasAccess,
 } from "./helpers/requests";
 import { formData as MockedFormData } from "./mocks/formData";
-function App() {
+
+const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
   const [queryDisabled, setQueryDisabled] = useState(true);
 
@@ -71,6 +72,23 @@ function App() {
   );
 
   useEffect(() => {
+    getClassesDataByEmail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.ownerEmail]);
+
+  useEffect(() => {
+    if (!classStudents?.length) {
+      getStudentsByClassInfo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownerClassesData]);
+
+  useEffect(() => {
+    getStudentsByClassInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.classInfo]);
+
+  const getClassesDataByEmail = async () => {
     try {
       if (!formData.token) throw Error("请设置token");
 
@@ -88,38 +106,29 @@ function App() {
       setQueryDisabled(true);
       alert(err);
     }
-  }, [formData.ownerEmail, formData.token, setQueryDisabled]);
+  };
 
-  useEffect(() => {
-    try {
-      setQueryDisabled(true);
-      if (!ownerClassesData?.length) return;
+  const getStudentsByClassInfo = () => {
+    if (!ownerClassesData?.length) return;
+    setQueryDisabled(true);
 
-      const classData = filterOutClassData(
-        formData.classInfo,
-        ownerClassesData
-      );
-      if (!classData) {
-        return;
-      }
-
-      getStudentsByClass(classData.class_id, classData.term_id)
-        .then((classStudents) => {
-          setClassStudents(classStudents);
-
-          if (!classStudents.length) {
-            throw Error("未获取到学生列表，请重试或刷新页面");
-          }
-
-          setQueryDisabled(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (err) {
-      alert(err);
+    const classData = filterOutClassData(formData.classInfo, ownerClassesData);
+    if (!classData) {
+      return;
     }
-  }, [formData.classInfo, ownerClassesData, setQueryDisabled]);
+
+    getStudentsByClass(classData.class_id, classData.term_id).then(
+      (classStudents = []) => {
+        setClassStudents(classStudents);
+        setQueryDisabled(false);
+        setOrdersData([]);
+
+        if (!classStudents?.length) {
+          alert("未获取到学生列表，请重试或刷新页面");
+        }
+      }
+    );
+  };
 
   const queryOrdersHandler = async (formData: FormData) => {
     if (!formData.token) {
@@ -143,6 +152,8 @@ function App() {
         ownerData.name
       );
       setOrdersData(ordersData);
+    } else {
+      alert("登录已过期");
     }
 
     setQueryDisabled(false);
@@ -202,6 +213,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

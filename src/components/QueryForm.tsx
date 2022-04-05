@@ -25,13 +25,15 @@ const QueryForm: FC<QueryFormProps> = ({
   useEffect(() => {
     if (!ownerClassesData?.length) return;
 
-    if (
-      !ownerClassesData.find(
-        (classData) => classDataToClassInfo(classData) === formData.classInfo
-      )
-    ) {
-      modifyFormData("classInfo", classDataToClassInfo(ownerClassesData?.[0]));
-    }
+    const selected = ownerClassesData.find(
+      (classData) => classDataToClassInfo(classData) === formData.classInfo
+    );
+
+    modifyFormData(
+      "classInfo",
+      classDataToClassInfo(selected || ownerClassesData?.[0])
+    );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownerClassesData]);
 
@@ -101,6 +103,8 @@ const QueryForm: FC<QueryFormProps> = ({
           </select>
         </label>
       </div>
+      <StyledDivider variant="middle" />
+
       <div className="form_item">
         <label>
           <span>项目链接名称</span>
@@ -113,14 +117,13 @@ const QueryForm: FC<QueryFormProps> = ({
           />
         </label>
       </div>
-      <StyledDivider variant="middle" />
 
       <div id="btns">
         <Button
           variant="contained"
           disabled={queryDisabled}
           onClick={queryHandler}
-          style={{ marginRight: "6px" }}
+          style={{ marginRight: "10px" }}
         >
           查询已购买{"|"}已领单
         </Button>
@@ -138,7 +141,8 @@ const QueryForm: FC<QueryFormProps> = ({
 };
 
 const StyledDivider = styled(Divider)(() => ({
-  margin: "10px 0",
+  margin: "10px 0 0 0",
+  borderStyle: "dotted",
 }));
 
 export default QueryForm;
