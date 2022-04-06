@@ -9,10 +9,12 @@ type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
   onClaimOrders: (FormData: FormData) => void;
   onQueryLogistics: () => void;
+  onQueryPreviousClassInfo: () => void;
   setFormData: (callback: (newData: FormData) => FormData) => void;
   queryDisabled: boolean;
   claimDisabled: boolean;
   getLogisticDisabled: boolean;
+  getPreviousClassInfoDisabled: boolean;
   formData: FormData;
   ownerClassesData?: ClassData[];
 };
@@ -20,9 +22,11 @@ const QueryForm: FC<QueryFormProps> = ({
   onQueryOrders,
   onClaimOrders,
   onQueryLogistics,
+  onQueryPreviousClassInfo,
   queryDisabled,
   claimDisabled,
   getLogisticDisabled,
+  getPreviousClassInfoDisabled,
   setFormData,
   formData,
   ownerClassesData,
@@ -62,7 +66,7 @@ const QueryForm: FC<QueryFormProps> = ({
       valid = false;
     }
     if (!formData.classInfo) {
-      alert("请输入班期");
+      alert("请输入班级");
       valid = false;
     }
     return valid;
@@ -107,7 +111,7 @@ const QueryForm: FC<QueryFormProps> = ({
       </div>
       <div className="form_item">
         <label>
-          <span>班期</span>
+          <span>班级</span>
           <select
             value={formData.classInfo}
             onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
@@ -124,7 +128,7 @@ const QueryForm: FC<QueryFormProps> = ({
 
       <div className="form_item">
         <label>
-          <span>内部物料信息</span>
+          <span>内部物料</span>
           <input
             type="text"
             style={{ width: "300px" }}
@@ -142,6 +146,29 @@ const QueryForm: FC<QueryFormProps> = ({
         onClick={onQueryLogistics}
       >
         获取物流信息
+      </Button>
+      <StyledDivider variant="middle" />
+
+      <div className="form_item">
+        <label>
+          <span>学生来自</span>
+          <input
+            type="text"
+            style={{ width: "300px" }}
+            value={formData.packageName}
+            onChange={(e) =>
+              modifyFormData("packageName", e.target.value.trim())
+            }
+          />
+        </label>
+      </div>
+      <Button
+        id="logistic_btn"
+        variant="contained"
+        disabled={getPreviousClassInfoDisabled}
+        onClick={onQueryPreviousClassInfo}
+      >
+        获取原班主任信息
       </Button>
       <StyledDivider variant="middle" />
 

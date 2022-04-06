@@ -3,9 +3,11 @@ import {
   getFestivalData,
   postCrmData,
   classDataToClassInfo,
+  getCrmData,
 } from ".";
 import {
   ClassData,
+  ClassInfo,
   LogisticItem,
   Order,
   OrderData,
@@ -273,7 +275,7 @@ export const claimOrders = async (
       )
     );
   } else {
-    throw Error("未找到班期信息");
+    throw Error("未找到班级信息");
   }
 };
 
@@ -311,7 +313,7 @@ const filterLogisticsWithGoods = (
     }, {} as LogisticItem);
 };
 
-export const getMatchedLogicsByPhone = async (
+const getMatchedLogicsByPhone = async (
   phone: string,
   shippingGoodsDesc: string
 ) => {
@@ -325,5 +327,57 @@ export const getMatchedLogicsByPhones = async (
 ) => {
   return Promise.all(
     phones.map((phone) => getMatchedLogicsByPhone(phone, shippingGoodsDesc))
+  );
+};
+
+export const getUserClassInfo = (userId: string): Promise<ClassInfo[]> => {
+  return getCrmData(`http://42.194.164.225:3000/users/${userId}`).then((data) =>
+    (data?.class_info ?? []).map((item: ClassInfo) => ({
+      ...item,
+      user_id: userId,
+    }))
+  );
+};
+
+const filterUserClassInfoByPackageName = (
+  classInfo: ClassInfo[],
+  packageName: string
+) => {
+  console.log(
+    classInfo,
+    classInfo
+      .filter((item) => item.package_name.trim() === packageName.trim())
+      .reduce((_, item) => {
+        return Object.keys(item).reduce((res: any, key) => {
+          res[key] = res[key] || "" + item[key as keyof ClassInfo] || "";
+          return res;
+        }, {});
+      }, {} as ClassInfo)
+  );
+  return classInfo
+    .filter((item) => item.package_name.trim() === packageName.trim())
+    .reduce((_, item) => {
+      return Object.keys(item).reduce((res: any, key) => {
+        res[key] = res[key] || "" + item[key as keyof ClassInfo] || "";
+        return res;
+      }, {});
+    }, {} as ClassInfo);
+};
+
+const getUserMatchedClassInfoByPackageName = async (
+  userId: string,
+  packageName: string
+) => {
+  const items = await getUserClassInfo(userId);
+  console.log(items);
+  return filterUserClassInfoByPackageName(items, packageName);
+};
+
+export const getMatchedClassInfosByPackageNames = async (
+  userIds: string[],
+  packageName: string
+) => {
+  return Promise.all(
+    userIds.map((id) => getUserMatchedClassInfoByPackageName(id, packageName))
   );
 };

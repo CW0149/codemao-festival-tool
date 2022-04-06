@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import { LogisticItem, Student } from "../constants/types";
+import { ClassInfo, LogisticItem, Student } from "../constants/types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,18 +15,21 @@ type StuTableProps = {
   paidOrderUserIds: string[];
   claimedOrderUserIds: string[];
   logisticItems: (LogisticItem | undefined)[];
+  classInfos: (ClassInfo | undefined)[];
 };
 const StuTable: FC<StuTableProps> = ({
   data = [],
   paidOrderUserIds,
   claimedOrderUserIds,
   logisticItems,
+  classInfos,
 }) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [rows, setRows] =
     useState<
-      (Student & { paid?: string; claimed?: string } & Partial<LogisticItem>)[]
+      (Student & { paid?: string; claimed?: string } & Partial<LogisticItem> &
+        Partial<ClassInfo>)[]
     >(data);
 
   /**
@@ -101,6 +104,28 @@ const StuTable: FC<StuTableProps> = ({
       });
     }
   }, [logisticItems]);
+
+  useEffect(() => {
+    if (classInfos.length) {
+      const userIdToItem = classInfos.reduce((res: any, item) => {
+        if (!item) return res;
+
+        res[item.user_id] = item;
+        return res;
+      }, {});
+
+      setRows((prevRows) => {
+        return prevRows.map((row) => {
+          if (!userIdToItem[row.user_id]) return row;
+
+          return {
+            ...row,
+            ...userIdToItem[row.user_id],
+          };
+        });
+      });
+    }
+  }, [classInfos]);
 
   if (!data.length) return null;
 
@@ -209,6 +234,31 @@ const StuTable: FC<StuTableProps> = ({
                     },
                   ] as HeadCell[])
                 : []),
+              ...(classInfos.length
+                ? ([
+                    {
+                      id: "package_name",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "前班级",
+                      align: "center",
+                    },
+                    {
+                      id: "teacher_name",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "前班主任",
+                      align: "center",
+                    },
+                    {
+                      id: "teacher_nickname",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "前班主任昵称",
+                      align: "center",
+                    },
+                  ] as HeadCell[])
+                : []),
               {
                 id: "follow_up_desc",
                 numeric: false,
@@ -264,6 +314,14 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.goodsDesc}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
+                    </>
+                  )}
+
+                  {!!classInfos.length && (
+                    <>
+                      <TableCell>{row.package_name}</TableCell>
+                      <TableCell>{row.teacher_name}</TableCell>
+                      <TableCell>{row.teacher_nickname}</TableCell>
                     </>
                   )}
 

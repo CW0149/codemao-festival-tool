@@ -48,6 +48,18 @@ export const postCrmData = (url: string, data: Record<string, any>) => {
   });
 };
 
+export const getCrmData = (url: string) => {
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/plain, */*",
+    },
+  }).then((res) => {
+    return res.json();
+  });
+};
+
 export const linesStrToArr = (linesStr: string): string[] => {
   return linesStr
     .split("\n")

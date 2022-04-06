@@ -5,6 +5,7 @@ import Summary from "./components/Summary";
 import StuTable from "./components/StuTable";
 import {
   ClassData,
+  ClassInfo,
   FormData,
   LogisticItem,
   Order,
@@ -17,6 +18,7 @@ import {
   claimOrders,
   filterOutClassData,
   getClassesData,
+  getMatchedClassInfosByPackageNames,
   getMatchedLogicsByPhones,
   getOrdersData,
   getOwnerByEmail,
@@ -29,6 +31,8 @@ const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
   const [queryDisabled, setQueryDisabled] = useState(true);
   const [getLogisticDisabled, setGetLogisticDisabled] = useState(true);
+  const [getPreviousClassInfoDisabled, setGetPreviousClassInfoDisabled] =
+    useState(true);
 
   const [formData, setFormData] = useState<FormData>(MockedFormData);
   const [ownerData, setOwnerData] = useState<OwnerData>();
@@ -37,6 +41,7 @@ const App: FC = () => {
   const [logisticItems, setLogisticItems] = useState<
     (LogisticItem | undefined)[]
   >([]);
+  const [classInfos, setClassInfos] = useState<(ClassInfo | undefined)[]>([]);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -121,15 +126,18 @@ const App: FC = () => {
 
     setQueryDisabled(true);
     setGetLogisticDisabled(true);
+    setGetPreviousClassInfoDisabled(true);
     setClassStudents([]);
     setOrdersData([]);
     setLogisticItems([]);
+    setClassInfos([]);
 
     getStudentsByClass(classData.class_id, classData.term_id).then(
       (classStudents = []) => {
         setClassStudents(classStudents);
         setQueryDisabled(false);
         setGetLogisticDisabled(false);
+        setGetPreviousClassInfoDisabled(false);
 
         if (!classStudents?.length) {
           alert("未获取到学生列表，请重试或刷新页面");
@@ -202,6 +210,7 @@ const App: FC = () => {
         setFormData={setFormData}
         ownerClassesData={ownerClassesData}
         getLogisticDisabled={getLogisticDisabled}
+        getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
         onQueryLogistics={async () => {
           setGetLogisticDisabled(true);
 
@@ -211,6 +220,16 @@ const App: FC = () => {
           );
           setLogisticItems(items);
           setGetLogisticDisabled(false);
+        }}
+        onQueryPreviousClassInfo={async () => {
+          setGetPreviousClassInfoDisabled(true);
+
+          const items = await getMatchedClassInfosByPackageNames(
+            classStudents.map((stu) => stu.user_id),
+            formData.packageName
+          );
+          setClassInfos(items);
+          setGetPreviousClassInfoDisabled(false);
         }}
       />
       <hr />
@@ -229,6 +248,7 @@ const App: FC = () => {
           paidOrderUserIds={paidOrderUserIds}
           claimedOrderUserIds={claimedOrderUserIds}
           logisticItems={logisticItems}
+          classInfos={classInfos}
         />
       </div>
     </div>

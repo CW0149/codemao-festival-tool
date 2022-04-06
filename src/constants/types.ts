@@ -194,3 +194,18 @@ export type LogisticItem = {
   consigneePhone: string;
   [key: string]: any;
 };
+
+export type ClassInfo = {
+  class_id: number;
+  class_name: string;
+  course_end_date: number;
+  course_start_date: number;
+  course_state: string;
+  package_name: string;
+  teacher_id: number;
+  teacher_name: string;
+  teacher_nickname: string;
+  term_id: number;
+  term_name: string;
+  user_id: string;
+};
