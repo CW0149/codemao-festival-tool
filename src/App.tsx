@@ -6,6 +6,7 @@ import StuTable from "./components/StuTable";
 import {
   ClassData,
   FormData,
+  LogisticItem,
   Order,
   OrderData,
   OwnerData,
@@ -16,6 +17,7 @@ import {
   claimOrders,
   filterOutClassData,
   getClassesData,
+  getMatchedLogicsByPhones,
   getOrdersData,
   getOwnerByEmail,
   getStudentsByClass,
@@ -26,11 +28,15 @@ import { formData as MockedFormData } from "./mocks/formData";
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
   const [queryDisabled, setQueryDisabled] = useState(true);
+  const [getLogisticDisabled, setGetLogisticDisabled] = useState(true);
 
   const [formData, setFormData] = useState<FormData>(MockedFormData);
   const [ownerData, setOwnerData] = useState<OwnerData>();
   const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
   const [classStudents, setClassStudents] = useState<Student[]>([]);
+  const [logisticItems, setLogisticItems] = useState<
+    (LogisticItem | undefined)[]
+  >([]);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -98,7 +104,6 @@ const App: FC = () => {
           (classesData) => {
             setOwnerClassesData(classesData);
             setQueryDisabled(false);
-            setOrdersData([]);
           }
         );
       });
@@ -110,18 +115,21 @@ const App: FC = () => {
 
   const getStudentsByClassInfo = () => {
     if (!ownerClassesData?.length) return;
-    setQueryDisabled(true);
 
     const classData = filterOutClassData(formData.classInfo, ownerClassesData);
-    if (!classData) {
-      return;
-    }
+    if (!classData) return;
+
+    setQueryDisabled(true);
+    setGetLogisticDisabled(true);
+    setClassStudents([]);
+    setOrdersData([]);
+    setLogisticItems([]);
 
     getStudentsByClass(classData.class_id, classData.term_id).then(
       (classStudents = []) => {
         setClassStudents(classStudents);
         setQueryDisabled(false);
-        setOrdersData([]);
+        setGetLogisticDisabled(false);
 
         if (!classStudents?.length) {
           alert("未获取到学生列表，请重试或刷新页面");
@@ -193,6 +201,17 @@ const App: FC = () => {
         formData={formData}
         setFormData={setFormData}
         ownerClassesData={ownerClassesData}
+        getLogisticDisabled={getLogisticDisabled}
+        onQueryLogistics={async () => {
+          setGetLogisticDisabled(true);
+
+          const items = await getMatchedLogicsByPhones(
+            classStudents.map((stu) => stu.phone_number),
+            "SU003670 编程猫机器人创造家V1.0礼盒 1"
+          );
+          setLogisticItems(items);
+          setGetLogisticDisabled(false);
+        }}
       />
       <hr />
 
@@ -209,6 +228,7 @@ const App: FC = () => {
           data={classStudents}
           paidOrderUserIds={paidOrderUserIds}
           claimedOrderUserIds={claimedOrderUserIds}
+          logisticItems={logisticItems}
         />
       </div>
     </div>

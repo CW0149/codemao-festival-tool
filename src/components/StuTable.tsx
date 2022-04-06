@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import { Student } from "../constants/types";
+import { LogisticItem, Student } from "../constants/types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,29 +10,24 @@ import { styled } from "@mui/material/styles";
 import EnhancedTableHead, { HeadCell } from "./common/EnhancedTableHead";
 import { getComparator, Order } from "../helpers";
 
-type ToShownKeys =
-  | "user_id"
-  | "child_name"
-  | "age"
-  | "nickname"
-  | "avatar_url"
-  | "phone_number"
-  | "follow_up_desc";
-
 type StuTableProps = {
   data: Student[];
   paidOrderUserIds: string[];
   claimedOrderUserIds: string[];
+  logisticItems: (LogisticItem | undefined)[];
 };
 const StuTable: FC<StuTableProps> = ({
   data = [],
   paidOrderUserIds,
   claimedOrderUserIds,
+  logisticItems,
 }) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [rows, setRows] =
-    useState<(Student & { paid?: string; claimed?: string })[]>(data);
+    useState<
+      (Student & { paid?: string; claimed?: string } & Partial<LogisticItem>)[]
+    >(data);
 
   /**
    * Set's value will update every time this compo renders
@@ -82,6 +77,30 @@ const StuTable: FC<StuTableProps> = ({
     paidUserIdsSet,
     claimedUserIdsSet,
   ]);
+
+  useEffect(() => {
+    if (logisticItems.length) {
+      const phoneToItem = logisticItems.reduce((res: any, item) => {
+        if (!item) return res;
+
+        res[item.consigneePhone] = item;
+        return res;
+      }, {});
+
+      console.log(phoneToItem);
+
+      setRows((prevRows) => {
+        return prevRows.map((row) => {
+          if (!phoneToItem[row.phone_number]) return row;
+
+          return {
+            ...row,
+            ...phoneToItem[row.phone_number],
+          };
+        });
+      });
+    }
+  }, [logisticItems]);
 
   if (!data.length) return null;
 
@@ -165,6 +184,31 @@ const StuTable: FC<StuTableProps> = ({
                 label: "用户ID",
                 align: "center",
               },
+              ...(logisticItems.length
+                ? ([
+                    {
+                      id: "goodsDesc",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "内部物料信息",
+                      align: "center",
+                    },
+                    {
+                      id: "logisticsState",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "物流状态",
+                      align: "center",
+                    },
+                    {
+                      id: "deliveryWaybillNo",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "物流号",
+                      align: "center",
+                    },
+                  ] as HeadCell[])
+                : []),
               {
                 id: "follow_up_desc",
                 numeric: false,
@@ -214,6 +258,15 @@ const StuTable: FC<StuTableProps> = ({
                   <TableCell align="right">{row.age}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
+
+                  {logisticItems.length ? (
+                    <>
+                      <TableCell>{row.goodsDesc}</TableCell>
+                      <TableCell>{row.logisticsState}</TableCell>
+                      <TableCell>{row.deliveryWaybillNo}</TableCell>
+                    </>
+                  ) : null}
+
                   <TableCell>{row.follow_up_desc}</TableCell>
                 </StyledTableRow>
               ))}

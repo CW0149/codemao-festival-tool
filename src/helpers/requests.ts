@@ -4,7 +4,13 @@ import {
   postCrmData,
   classDataToClassInfo,
 } from ".";
-import { ClassData, Order, OrderData, OwnerData } from "../constants/types";
+import {
+  ClassData,
+  LogisticItem,
+  Order,
+  OrderData,
+  OwnerData,
+} from "../constants/types";
 
 /**
  *
@@ -276,4 +282,46 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     class_id: classId,
     term_id: termId,
   }).then((data) => data.items);
+};
+
+export const getLogisticsByPhone = (phone: string) => {
+  return postCrmData("http://42.194.164.225:3000/student/logistics", {
+    phone,
+  }).then((data) =>
+    (data?.data?.items ?? []).map((item: LogisticItem) => ({
+      ...item,
+      consigneePhone: phone,
+    }))
+  );
+};
+
+const filterLogisticsWithGoods = (
+  logisticItems: LogisticItem[],
+  goodsDesc: string
+) => {
+  return logisticItems
+    .filter((item) => item.shippingGoodsDesc.trim() === goodsDesc.trim())
+    .reduce((_, item) => {
+      return Object.keys(item).reduce((res: any, key) => {
+        res[key] = res[key] || "" + item[key] || "";
+        return res;
+      }, {});
+    }, {} as LogisticItem);
+};
+
+export const getMatchedLogicsByPhone = async (
+  phone: string,
+  goodsDesc: string
+) => {
+  const items = await getLogisticsByPhone(phone);
+  return filterLogisticsWithGoods(items, goodsDesc);
+};
+
+export const getMatchedLogicsByPhones = async (
+  phones: string[],
+  goodsDesc: string
+) => {
+  return Promise.all(
+    phones.map((phone) => getMatchedLogicsByPhone(phone, goodsDesc))
+  );
 };

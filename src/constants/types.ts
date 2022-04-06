@@ -185,3 +185,12 @@ export type FormData = typeof formData;
 export type FormDataKey = keyof FormData;
 
 export type ApiResponse = { res: "success" | "error"; [key: string]: any };
+
+export type LogisticItem = {
+  consigneeId: number;
+  shippingGoodsDesc: string;
+  logisticsState: string;
+  deliveryWaybillNo: string;
+  consigneePhone: string;
+  [key: string]: any;
+};

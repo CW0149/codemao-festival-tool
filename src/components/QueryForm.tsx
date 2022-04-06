@@ -1,27 +1,34 @@
 import { styled } from "@mui/material/styles";
 import { Button, Divider } from "@mui/material";
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
+import debounce from "lodash.debounce";
 import { ClassData, FormData, FormDataKey } from "../constants/types";
 import { classDataToClassInfo } from "../helpers";
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
   onClaimOrders: (FormData: FormData) => void;
+  onQueryLogistics: () => void;
   setFormData: (callback: (newData: FormData) => FormData) => void;
   queryDisabled: boolean;
   claimDisabled: boolean;
+  getLogisticDisabled: boolean;
   formData: FormData;
   ownerClassesData?: ClassData[];
 };
 const QueryForm: FC<QueryFormProps> = ({
   onQueryOrders,
   onClaimOrders,
+  onQueryLogistics,
   queryDisabled,
   claimDisabled,
+  getLogisticDisabled,
   setFormData,
   formData,
   ownerClassesData,
 }) => {
+  const [email, setEmail] = useState(formData.ownerEmail);
+
   useEffect(() => {
     if (!ownerClassesData?.length) return;
 
@@ -73,6 +80,13 @@ const QueryForm: FC<QueryFormProps> = ({
     }
   };
 
+  const modifyEmail = useCallback(
+    debounce((value: string) => {
+      modifyFormData("ownerEmail", value);
+    }, 300),
+    []
+  );
+
   return (
     <div className="form_wrapper">
       <div className="form_item">
@@ -80,10 +94,13 @@ const QueryForm: FC<QueryFormProps> = ({
           <span>公司邮箱</span>
           <input
             type="text"
-            value={formData.ownerEmail}
-            onChange={(e) =>
-              modifyFormData("ownerEmail", e.target.value.trim())
-            }
+            value={email}
+            onChange={(e) => {
+              const newValue = e.target.value.trim();
+
+              setEmail(newValue);
+              modifyEmail(newValue);
+            }}
             placeholder="可选，若归属人有重名必填"
           />
         </label>
@@ -103,6 +120,13 @@ const QueryForm: FC<QueryFormProps> = ({
           </select>
         </label>
       </div>
+      <Button
+        variant="contained"
+        disabled={getLogisticDisabled}
+        onClick={onQueryLogistics}
+      >
+        获取物流信息
+      </Button>
       <StyledDivider variant="middle" />
 
       <div className="form_item">
