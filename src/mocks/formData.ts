@@ -3,6 +3,7 @@ export const formData = {
   workName: "【高阶】机器人高阶课-6期",
   classInfo: "编程猫机器人系统课8期A2",
   ownerEmail: "yanluxia@codemao.cn",
+  shippingGoodsDesc: "SU003670 编程猫机器人创造家V1.0礼盒 1",
   ids: `
   994589094
   11728638

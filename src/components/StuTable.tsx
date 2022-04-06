@@ -190,7 +190,7 @@ const StuTable: FC<StuTableProps> = ({
                       id: "goodsDesc",
                       numeric: false,
                       disablePadding: true,
-                      label: "内部物料信息",
+                      label: "三方物料信息",
                       align: "center",
                     },
                     {
@@ -259,13 +259,13 @@ const StuTable: FC<StuTableProps> = ({
                   <TableCell>{row.phone_number}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
 
-                  {logisticItems.length ? (
+                  {!!logisticItems.length && (
                     <>
                       <TableCell>{row.goodsDesc}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
                     </>
-                  ) : null}
+                  )}
 
                   <TableCell>{row.follow_up_desc}</TableCell>
                 </StyledTableRow>

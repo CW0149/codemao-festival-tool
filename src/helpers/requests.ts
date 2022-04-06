@@ -297,10 +297,12 @@ export const getLogisticsByPhone = (phone: string) => {
 
 const filterLogisticsWithGoods = (
   logisticItems: LogisticItem[],
-  goodsDesc: string
+  shippingGoodsDesc: string
 ) => {
   return logisticItems
-    .filter((item) => item.shippingGoodsDesc.trim() === goodsDesc.trim())
+    .filter(
+      (item) => item.shippingGoodsDesc.trim() === shippingGoodsDesc.trim()
+    )
     .reduce((_, item) => {
       return Object.keys(item).reduce((res: any, key) => {
         res[key] = res[key] || "" + item[key] || "";
@@ -311,17 +313,17 @@ const filterLogisticsWithGoods = (
 
 export const getMatchedLogicsByPhone = async (
   phone: string,
-  goodsDesc: string
+  shippingGoodsDesc: string
 ) => {
   const items = await getLogisticsByPhone(phone);
-  return filterLogisticsWithGoods(items, goodsDesc);
+  return filterLogisticsWithGoods(items, shippingGoodsDesc);
 };
 
 export const getMatchedLogicsByPhones = async (
   phones: string[],
-  goodsDesc: string
+  shippingGoodsDesc: string
 ) => {
   return Promise.all(
-    phones.map((phone) => getMatchedLogicsByPhone(phone, goodsDesc))
+    phones.map((phone) => getMatchedLogicsByPhone(phone, shippingGoodsDesc))
   );
 };

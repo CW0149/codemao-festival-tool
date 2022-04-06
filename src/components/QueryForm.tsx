@@ -120,7 +120,23 @@ const QueryForm: FC<QueryFormProps> = ({
           </select>
         </label>
       </div>
+      <StyledDivider variant="middle" />
+
+      <div className="form_item">
+        <label>
+          <span>内部物料信息</span>
+          <input
+            type="text"
+            style={{ width: "300px" }}
+            value={formData.shippingGoodsDesc}
+            onChange={(e) =>
+              modifyFormData("shippingGoodsDesc", e.target.value.trim())
+            }
+          />
+        </label>
+      </div>
       <Button
+        id="logistic_btn"
         variant="contained"
         disabled={getLogisticDisabled}
         onClick={onQueryLogistics}

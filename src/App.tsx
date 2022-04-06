@@ -207,7 +207,7 @@ const App: FC = () => {
 
           const items = await getMatchedLogicsByPhones(
             classStudents.map((stu) => stu.phone_number),
-            "SU003670 编程猫机器人创造家V1.0礼盒 1"
+            formData.shippingGoodsDesc
           );
           setLogisticItems(items);
           setGetLogisticDisabled(false);

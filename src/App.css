@@ -62,7 +62,7 @@ strong {
   text-align: center;
 }
 .form_wrapper {
-  max-width: 900px;
+  max-width: 720px;
   text-align: center;
   margin: 0 auto;
 }
@@ -95,9 +95,9 @@ hr {
   }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
   .App input, .App select {
-    width: 100%;
+    width: 100% !important;
     margin-top: 0;
   }
   .App .form_item {
@@ -107,5 +107,9 @@ hr {
   .App label > span {
     text-align: center !important;
     width: auto;
+  }
+  #logistic_btn {
+    margin-top: 10px;
+    width: 100%;
   }
 }
