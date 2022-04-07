@@ -192,6 +192,12 @@ export type LogisticItem = {
   logisticsState: string;
   deliveryWaybillNo: string;
   consigneePhone: string;
+  consigneeName: string;
+  province: string;
+  city: string;
+  county: string;
+  streetAddress: string;
+  phone: string; // used for indexing, not returned from endpoint
   [key: string]: any;
 };
 

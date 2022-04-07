@@ -292,7 +292,7 @@ export const getLogisticsByPhone = (phone: string) => {
   }).then((data) =>
     (data?.data?.items ?? []).map((item: LogisticItem) => ({
       ...item,
-      consigneePhone: phone,
+      phone,
     }))
   );
 };
@@ -369,7 +369,6 @@ const getUserMatchedClassInfoByPackageName = async (
   packageName: string
 ) => {
   const items = await getUserClassInfo(userId);
-  console.log(items);
   return filterUserClassInfoByPackageName(items, packageName);
 };
 

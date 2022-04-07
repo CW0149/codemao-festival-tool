@@ -86,7 +86,7 @@ const StuTable: FC<StuTableProps> = ({
       const phoneToItem = logisticItems.reduce((res: any, item) => {
         if (!item) return res;
 
-        res[item.consigneePhone] = item;
+        res[item.phone] = item;
         return res;
       }, {});
 
@@ -175,6 +175,7 @@ const StuTable: FC<StuTableProps> = ({
                       disablePadding: false,
                       label: "已购买",
                       align: "center",
+                      sortable: true,
                     } as HeadCell,
                   ]
                 : []),
@@ -186,6 +187,7 @@ const StuTable: FC<StuTableProps> = ({
                       disablePadding: false,
                       label: "已领单",
                       align: "center",
+                      sortable: true,
                     } as HeadCell,
                   ]
                 : []),
@@ -194,13 +196,8 @@ const StuTable: FC<StuTableProps> = ({
                 numeric: true,
                 disablePadding: false,
                 label: "年龄",
-              },
-              {
-                id: "phone_number",
-                numeric: false,
-                disablePadding: false,
-                label: "电话",
-                align: "center",
+                align: "left",
+                sortable: true,
               },
               {
                 id: "user_id",
@@ -217,6 +214,7 @@ const StuTable: FC<StuTableProps> = ({
                       disablePadding: true,
                       label: "三方物料信息",
                       align: "center",
+                      sortable: true,
                     },
                     {
                       id: "logisticsState",
@@ -232,15 +230,29 @@ const StuTable: FC<StuTableProps> = ({
                       label: "物流号",
                       align: "center",
                     },
+                    {
+                      id: "consigneeName",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "收货人信息",
+                      align: "center",
+                    },
                   ] as HeadCell[])
                 : []),
+              {
+                id: "phone_number",
+                numeric: false,
+                disablePadding: false,
+                label: "电话",
+                align: "center",
+              },
               ...(classInfos.length
                 ? ([
                     {
                       id: "package_name",
                       numeric: false,
                       disablePadding: true,
-                      label: "前班级",
+                      label: "前课程",
                       align: "center",
                     },
                     {
@@ -259,13 +271,13 @@ const StuTable: FC<StuTableProps> = ({
                     },
                   ] as HeadCell[])
                 : []),
-              {
-                id: "follow_up_desc",
-                numeric: false,
-                disablePadding: false,
-                label: "描述",
-                align: "center",
-              },
+              // {
+              //   id: "follow_up_desc",
+              //   numeric: false,
+              //   disablePadding: false,
+              //   label: "描述",
+              //   align: "center",
+              // },
             ]}
           />
           <TableBody>
@@ -277,7 +289,7 @@ const StuTable: FC<StuTableProps> = ({
                   key={row.user_id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell>
+                  <TableCell sx={{ maxWidth: "100px" }}>
                     <img src={row.avatar_url} className="avatar" alt="avatar" />
                     &nbsp;
                     {row.nickname}
@@ -305,8 +317,7 @@ const StuTable: FC<StuTableProps> = ({
                       </span>
                     </TableCell>
                   )}
-                  <TableCell align="right">{row.age}</TableCell>
-                  <TableCell>{row.phone_number}</TableCell>
+                  <TableCell align="left">{row.age}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
 
                   {!!logisticItems.length && (
@@ -314,8 +325,27 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.goodsDesc}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
+                      <TableCell>
+                        {row.deliveryWaybillNo ? (
+                          <>
+                            <div>收货人：{row.consigneeName}</div>
+                            <div>联系电话：{row.phone}</div>
+                            <div>
+                              收货地址：
+                              {(row.province || "") +
+                                (row.city || "") +
+                                (row.county || "") +
+                                (row.streetAddress || "")}
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </TableCell>
                     </>
                   )}
+
+                  <TableCell>{row.phone_number}</TableCell>
 
                   {!!classInfos.length && (
                     <>
@@ -325,7 +355,7 @@ const StuTable: FC<StuTableProps> = ({
                     </>
                   )}
 
-                  <TableCell>{row.follow_up_desc}</TableCell>
+                  {/* <TableCell>{row.follow_up_desc}</TableCell> */}
                 </StyledTableRow>
               ))}
           </TableBody>
