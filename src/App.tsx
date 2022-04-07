@@ -1,8 +1,9 @@
 import { FC, useEffect, useMemo, useState } from "react";
+import CsvDownloader from "react-csv-downloader";
 import "./App.css";
 import QueryForm from "./components/QueryForm";
 import Summary from "./components/Summary";
-import StuTable from "./components/StuTable";
+import StuTable, { StudentTableRow } from "./components/StuTable";
 import {
   ClassData,
   ClassInfo,
@@ -26,6 +27,7 @@ import {
   testHasAccess,
 } from "./helpers/requests";
 import { formData as MockedFormData } from "./mocks/formData";
+import { Button } from "@mui/material";
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
@@ -81,6 +83,14 @@ const App: FC = () => {
     () => !notClaimedOrders.length,
     [notClaimedOrders]
   );
+
+  const [rows, setRows] = useState<StudentTableRow[]>([]);
+
+  useEffect(() => {
+    if (classStudents && classStudents.length) {
+      setRows(classStudents);
+    }
+  }, [classStudents]);
 
   useEffect(() => {
     getClassesDataByEmail();
@@ -198,40 +208,127 @@ const App: FC = () => {
     }
   };
 
+  const exportTable = () => {};
+
   return (
     <div className="App">
-      <header className="App-header"></header>
-      <QueryForm
-        onQueryOrders={queryOrdersHandler}
-        onClaimOrders={claimOrdersHandler}
-        queryDisabled={queryDisabled}
-        claimDisabled={claimDisabled}
-        formData={formData}
-        setFormData={setFormData}
-        ownerClassesData={ownerClassesData}
-        getLogisticDisabled={getLogisticDisabled}
-        getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
-        onQueryLogistics={async () => {
-          setGetLogisticDisabled(true);
+      <header>
+        <QueryForm
+          onQueryOrders={queryOrdersHandler}
+          onClaimOrders={claimOrdersHandler}
+          queryDisabled={queryDisabled}
+          claimDisabled={claimDisabled}
+          formData={formData}
+          setFormData={setFormData}
+          ownerClassesData={ownerClassesData}
+          getLogisticDisabled={getLogisticDisabled}
+          getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
+          onQueryLogistics={async () => {
+            setGetLogisticDisabled(true);
 
-          const items = await getMatchedLogicsByPhones(
-            classStudents.map((stu) => stu.phone_number),
-            formData.shippingGoodsDesc
-          );
-          setLogisticItems(items);
-          setGetLogisticDisabled(false);
-        }}
-        onQueryPreviousClassInfo={async () => {
-          setGetPreviousClassInfoDisabled(true);
+            const items = await getMatchedLogicsByPhones(
+              classStudents.map((stu) => stu.phone_number),
+              formData.shippingGoodsDesc
+            );
+            setLogisticItems(items);
+            setGetLogisticDisabled(false);
+          }}
+          onQueryPreviousClassInfo={async () => {
+            setGetPreviousClassInfoDisabled(true);
 
-          const items = await getMatchedClassInfosByPackageNames(
-            classStudents.map((stu) => stu.user_id),
-            formData.packageName
-          );
-          setClassInfos(items);
-          setGetPreviousClassInfoDisabled(false);
-        }}
-      />
+            const items = await getMatchedClassInfosByPackageNames(
+              classStudents.map((stu) => stu.user_id),
+              formData.packageName
+            );
+            setClassInfos(items);
+            setGetPreviousClassInfoDisabled(false);
+          }}
+        />
+        <div className="pc_btns">
+          <CsvDownloader
+            filename={`${formData.classInfo}`}
+            datas={rows}
+            columns={[
+              {
+                id: "nickname",
+                displayName: "昵称",
+              },
+              {
+                id: "child_name",
+                displayName: "学生",
+              },
+              ...(paidOrderUserIds.length
+                ? [
+                    {
+                      id: "paid",
+                      displayName: "已购买",
+                    },
+                  ]
+                : []),
+              ...(claimedOrderUserIds.length > 0
+                ? [
+                    {
+                      id: "claimed",
+                      displayName: "我已领单",
+                    },
+                  ]
+                : []),
+              {
+                id: "age",
+                displayName: "年龄",
+              },
+              {
+                id: "user_id",
+                displayName: "用户ID",
+              },
+              ...(logisticItems.length
+                ? [
+                    {
+                      id: "goodsDesc",
+                      displayName: "三方物料信息",
+                    },
+                    {
+                      id: "logisticsState",
+                      displayName: "物流状态",
+                    },
+                    {
+                      id: "deliveryWaybillNo",
+                      displayName: "物流号",
+                    },
+                    {
+                      id: "consigneeName",
+                      displayName: "收货人信息",
+                    },
+                  ]
+                : []),
+              {
+                id: "phone_number",
+                displayName: "电话",
+              },
+              ...(classInfos.length
+                ? [
+                    {
+                      id: "package_name",
+                      displayName: "前课程",
+                    },
+                    {
+                      id: "teacher_name",
+                      displayName: "前班主任",
+                    },
+                    {
+                      id: "teacher_nickname",
+                      displayName: "前班主任昵称",
+                    },
+                  ]
+                : []),
+            ]}
+          >
+            <Button variant="contained" onClick={exportTable}>
+              导出表格
+            </Button>
+          </CsvDownloader>
+        </div>
+      </header>
       <hr />
 
       <div className="results">
@@ -244,11 +341,12 @@ const App: FC = () => {
           classStudents={classStudents}
         />
         <StuTable
-          data={classStudents}
+          data={rows}
           paidOrderUserIds={paidOrderUserIds}
           claimedOrderUserIds={claimedOrderUserIds}
           logisticItems={logisticItems}
           classInfos={classInfos}
+          setRows={setRows}
         />
       </div>
     </div>

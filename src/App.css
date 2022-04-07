@@ -62,9 +62,11 @@ strong {
   text-align: center;
 }
 .form_wrapper {
+  width: 100%;
   max-width: 720px;
   text-align: center;
   margin: 0 auto;
+  text-align: left;
 }
 
 img.avatar {
@@ -88,10 +90,17 @@ hr {
   height: calc(100vh - 210px);
 }
 
+header {
+  display: flex;
+}
+
 @media screen and (max-width: 800px) {
   .App label > span {
     text-align: right;
     width: 100px;
+  }
+  .pc_btns {
+    display: none;
   }
 }
 

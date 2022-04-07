@@ -22,10 +22,11 @@ const Summary: FC<SummaryProps> = ({
       {classInfo}[总:{classStudents.length}人]
       {notClaimedOrders.length ? (
         <div>
-          <strong>未认领用户信息：</strong>
+          <strong>未被我认领用户信息：</strong>
           {notClaimedOrders.map((order) => (
             <div>
-              {order.user_id} {order.username}
+              {order.user_id} {order.username}{" "}
+              {order.flagid_name ? `[${order.flagid_name}]` : ""}
             </div>
           ))}
           <hr />

@@ -10,12 +10,19 @@ import { styled } from "@mui/material/styles";
 import EnhancedTableHead, { HeadCell } from "./common/EnhancedTableHead";
 import { getComparator, Order } from "../helpers";
 
+export type StudentTableRow = Student & {
+  paid?: string;
+  claimed?: string;
+} & Partial<LogisticItem> &
+  Partial<ClassInfo>;
+
 type StuTableProps = {
-  data: Student[];
+  data: StudentTableRow[];
   paidOrderUserIds: string[];
   claimedOrderUserIds: string[];
   logisticItems: (LogisticItem | undefined)[];
   classInfos: (ClassInfo | undefined)[];
+  setRows: (callback: (prevRows: any[]) => any) => void;
 };
 const StuTable: FC<StuTableProps> = ({
   data = [],
@@ -23,14 +30,10 @@ const StuTable: FC<StuTableProps> = ({
   claimedOrderUserIds,
   logisticItems,
   classInfos,
+  setRows,
 }) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  const [rows, setRows] =
-    useState<
-      (Student & { paid?: string; claimed?: string } & Partial<LogisticItem> &
-        Partial<ClassInfo>)[]
-    >(data);
 
   /**
    * Set's value will update every time this compo renders
@@ -44,12 +47,6 @@ const StuTable: FC<StuTableProps> = ({
     () => new Set(claimedOrderUserIds.map((id) => String(id))),
     [claimedOrderUserIds]
   );
-
-  useEffect(() => {
-    if (data && data.length) {
-      setRows(data);
-    }
-  }, [data]);
 
   useEffect(() => {
     if (paidOrderUserIds.length) {
@@ -74,6 +71,7 @@ const StuTable: FC<StuTableProps> = ({
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     paidOrderUserIds,
     claimedOrderUserIds,
@@ -89,8 +87,6 @@ const StuTable: FC<StuTableProps> = ({
         res[item.phone] = item;
         return res;
       }, {});
-
-      console.log(phoneToItem);
 
       setRows((prevRows) => {
         return prevRows.map((row) => {
@@ -185,7 +181,7 @@ const StuTable: FC<StuTableProps> = ({
                       id: "claimed",
                       numeric: false,
                       disablePadding: false,
-                      label: "已领单",
+                      label: "我已领单",
                       align: "center",
                       sortable: true,
                     } as HeadCell,
@@ -281,7 +277,7 @@ const StuTable: FC<StuTableProps> = ({
             ]}
           />
           <TableBody>
-            {rows
+            {data
               .slice()
               .sort(getComparator(order, orderBy))
               .map((row) => (
