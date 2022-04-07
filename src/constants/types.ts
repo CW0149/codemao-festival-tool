@@ -161,7 +161,12 @@ type StudentKeys =
   | "n_answer_after_class"
   | "duration_in_class"
   | "renew_state"
-  | "n_weekly_test";
+  | "n_weekly_test"
+  | "address"
+  | "city"
+  | "district"
+  | "parent_name"
+  | "province";
 
 export type OwnerData = {
   id: number;

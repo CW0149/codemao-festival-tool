@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import EnhancedTableHead, { HeadCell } from "./common/EnhancedTableHead";
 import { getComparator, Order } from "../helpers";
+import { getColumns } from "../constants/columns";
 
 export type StudentTableRow = Student & {
   paid?: string;
@@ -150,131 +151,21 @@ const StuTable: FC<StuTableProps> = ({
             onRequestSort={handleRequestSort}
             order={order}
             orderBy={orderBy}
-            headCells={[
-              {
-                id: "nickname",
-                numeric: false,
-                disablePadding: false,
-                label: "昵称",
-              },
-              {
-                id: "child_name",
-                numeric: false,
-                disablePadding: false,
-                label: "学生",
-              },
-              ...(hasPaidOrders
-                ? [
-                    {
-                      id: "paid",
-                      numeric: false,
-                      disablePadding: false,
-                      label: "已购买",
-                      align: "center",
-                      sortable: true,
-                    } as HeadCell,
-                  ]
-                : []),
-              ...(hasClaimedOrders
-                ? [
-                    {
-                      id: "claimed",
-                      numeric: false,
-                      disablePadding: false,
-                      label: "我已领单",
-                      align: "center",
-                      sortable: true,
-                    } as HeadCell,
-                  ]
-                : []),
-              {
-                id: "age",
-                numeric: true,
-                disablePadding: false,
-                label: "年龄",
-                align: "left",
-                sortable: true,
-              },
-              {
-                id: "user_id",
-                numeric: false,
-                disablePadding: true,
-                label: "用户ID",
-                align: "center",
-              },
-              ...(logisticItems.length
-                ? ([
-                    {
-                      id: "goodsDesc",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "三方物料信息",
-                      align: "center",
-                      sortable: true,
-                    },
-                    {
-                      id: "logisticsState",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "物流状态",
-                      align: "center",
-                    },
-                    {
-                      id: "deliveryWaybillNo",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "物流号",
-                      align: "center",
-                    },
-                    {
-                      id: "consigneeName",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "收货人信息",
-                      align: "center",
-                    },
-                  ] as HeadCell[])
-                : []),
-              {
-                id: "phone_number",
-                numeric: false,
-                disablePadding: false,
-                label: "电话",
-                align: "center",
-              },
-              ...(classInfos.length
-                ? ([
-                    {
-                      id: "package_name",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "前课程",
-                      align: "center",
-                    },
-                    {
-                      id: "teacher_name",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "前班主任",
-                      align: "center",
-                    },
-                    {
-                      id: "teacher_nickname",
-                      numeric: false,
-                      disablePadding: true,
-                      label: "前班主任昵称",
-                      align: "center",
-                    },
-                  ] as HeadCell[])
-                : []),
-              // {
-              //   id: "follow_up_desc",
-              //   numeric: false,
-              //   disablePadding: false,
-              //   label: "描述",
-              //   align: "center",
-              // },
-            ]}
+            headCells={getColumns(
+              !!paidOrderUserIds.length,
+              !!claimedOrderUserIds.length,
+              !!logisticItems.length,
+              !!classInfos.length
+            ).map(
+              (item) =>
+                ({
+                  ...item,
+                  numeric: false,
+                  align: "center",
+                  sortable: true,
+                  disablePadding: true,
+                } as HeadCell)
+            )}
           />
           <TableBody>
             {data
@@ -285,6 +176,7 @@ const StuTable: FC<StuTableProps> = ({
                   key={row.user_id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
+                  <TableCell>{row.index + 1}</TableCell>
                   <TableCell sx={{ maxWidth: "100px" }}>
                     <img src={row.avatar_url} className="avatar" alt="avatar" />
                     &nbsp;
@@ -314,34 +206,22 @@ const StuTable: FC<StuTableProps> = ({
                     </TableCell>
                   )}
                   <TableCell align="left">{row.age}</TableCell>
-                  <TableCell>{row.user_id}</TableCell>
 
                   {!!logisticItems.length && (
                     <>
                       <TableCell>{row.goodsDesc}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
-                      <TableCell>
-                        {row.deliveryWaybillNo ? (
-                          <>
-                            <div>收货人：{row.consigneeName}</div>
-                            <div>联系电话：{row.phone}</div>
-                            <div>
-                              收货地址：
-                              {(row.province || "") +
-                                (row.city || "") +
-                                (row.county || "") +
-                                (row.streetAddress || "")}
-                            </div>
-                          </>
-                        ) : (
-                          ""
-                        )}
-                      </TableCell>
                     </>
                   )}
-
+                  <TableCell>{row.parent_name || row.child_name}</TableCell>
+                  <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
+
+                  <TableCell>{row.province}</TableCell>
+                  <TableCell>{row.city}</TableCell>
+                  <TableCell>{row.district}</TableCell>
+                  <TableCell>{row.address}</TableCell>
 
                   {!!classInfos.length && (
                     <>

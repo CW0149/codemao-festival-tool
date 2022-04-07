@@ -28,6 +28,7 @@ import {
 } from "./helpers/requests";
 import { formData as MockedFormData } from "./mocks/formData";
 import { Button } from "@mui/material";
+import { getColumns } from "./constants/columns";
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
@@ -248,80 +249,12 @@ const App: FC = () => {
           <CsvDownloader
             filename={`${formData.classInfo}`}
             datas={rows}
-            columns={[
-              {
-                id: "nickname",
-                displayName: "昵称",
-              },
-              {
-                id: "child_name",
-                displayName: "学生",
-              },
-              ...(paidOrderUserIds.length
-                ? [
-                    {
-                      id: "paid",
-                      displayName: "已购买",
-                    },
-                  ]
-                : []),
-              ...(claimedOrderUserIds.length > 0
-                ? [
-                    {
-                      id: "claimed",
-                      displayName: "我已领单",
-                    },
-                  ]
-                : []),
-              {
-                id: "age",
-                displayName: "年龄",
-              },
-              {
-                id: "user_id",
-                displayName: "用户ID",
-              },
-              ...(logisticItems.length
-                ? [
-                    {
-                      id: "goodsDesc",
-                      displayName: "三方物料信息",
-                    },
-                    {
-                      id: "logisticsState",
-                      displayName: "物流状态",
-                    },
-                    {
-                      id: "deliveryWaybillNo",
-                      displayName: "物流号",
-                    },
-                    {
-                      id: "consigneeName",
-                      displayName: "收货人信息",
-                    },
-                  ]
-                : []),
-              {
-                id: "phone_number",
-                displayName: "电话",
-              },
-              ...(classInfos.length
-                ? [
-                    {
-                      id: "package_name",
-                      displayName: "前课程",
-                    },
-                    {
-                      id: "teacher_name",
-                      displayName: "前班主任",
-                    },
-                    {
-                      id: "teacher_nickname",
-                      displayName: "前班主任昵称",
-                    },
-                  ]
-                : []),
-            ]}
+            columns={getColumns(
+              !!paidOrders.length,
+              !!claimedOrders.length,
+              !!logisticItems.length,
+              !!classInfos.length
+            ).map((item) => ({ id: item.id, displayName: item.label }))}
           >
             <Button variant="contained" onClick={exportTable}>
               导出表格

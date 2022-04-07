@@ -326,7 +326,9 @@ export const getMatchedLogicsByPhones = async (
   shippingGoodsDesc: string
 ) => {
   return Promise.all(
-    phones.map((phone) => getMatchedLogicsByPhone(phone, shippingGoodsDesc))
+    ["15871653121"].map((phone) =>
+      getMatchedLogicsByPhone(phone, shippingGoodsDesc)
+    )
   );
 };
 
