@@ -162,10 +162,10 @@ const StuTable: FC<StuTableProps> = ({
                 ({
                   ...item,
                   numeric: false,
-                  align: "center",
                   sortable: true,
                   disablePadding: true,
                   minWidth: getColumnMinWidth(item.id),
+                  align: "center",
                 } as HeadCell)
             )}
           />
@@ -186,7 +186,7 @@ const StuTable: FC<StuTableProps> = ({
                   </TableCell>
                   <TableCell>{row.child_name}</TableCell>
                   {hasPaidOrders && (
-                    <TableCell align="center">
+                    <TableCell>
                       <span
                         style={{
                           color: row.paid !== row.claimed ? "red" : undefined,
@@ -197,7 +197,7 @@ const StuTable: FC<StuTableProps> = ({
                     </TableCell>
                   )}
                   {hasClaimedOrders && (
-                    <TableCell align="center">
+                    <TableCell>
                       <span
                         style={{
                           color: row.paid !== row.claimed ? "red" : undefined,
@@ -207,7 +207,7 @@ const StuTable: FC<StuTableProps> = ({
                       </span>
                     </TableCell>
                   )}
-                  <TableCell align="left">{row.age}</TableCell>
+                  <TableCell>{row.age}</TableCell>
 
                   {!!logisticItems.length && (
                     <>
@@ -227,9 +227,9 @@ const StuTable: FC<StuTableProps> = ({
                   <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
 
-                  <TableCell>{row.province}</TableCell>
-                  <TableCell>{row.city}</TableCell>
-                  <TableCell>{row.district}</TableCell>
+                  <TableCell align="center">{row.province}</TableCell>
+                  <TableCell align="center">{row.city}</TableCell>
+                  <TableCell align="center">{row.district}</TableCell>
                   <TableCell>{row.address}</TableCell>
 
                   {!!classInfos.length && (

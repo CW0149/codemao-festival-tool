@@ -1,11 +1,22 @@
+html, body {
+  height: 100%;
+  background-color: #ddf2f763;
+}
+body {
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
 .App {
-  padding: 10px 20px 20px 20px;
   color: #333;
   font-family: "Open Sans",Helvetica,Arial,sans-serif;
 }
 .form_item {
   display: inline-block;
   margin-right: 20px;
+  
+}
+.form_wrapper * {
+  font-size: 14px !important;
 }
 label > span {
   display: inline-block;
@@ -13,41 +24,6 @@ label > span {
   line-height: 36px;
   margin-right: 10px;
   text-align: right;
-}
-input, textarea, select {
-  font-size: 14px;
-  height: 36px;
-  box-sizing: border-box;
-  width: 260px;
-  border: 1px solid rgb(222, 224, 224);
-  transition: border-color 0.2s ease 0s;
-  border-radius: 2px;
-  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-  color: rgb(63, 64, 64);
-  letter-spacing: 0.2px;
-  padding: 0px 12px;
-  line-height: normal;
-  border-radius: 3px;
-  margin-top: 10px;
-}
-input:hover, textarea:hover {
-  box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
-}
-select {
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: transparent;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-  background-repeat: no-repeat;
-  background-position-x: 100%;
-  background-position-y: 5px;
-  border: 1px solid #dfdfdf;
-  border-radius: 2px;
-}
-textarea {
-  height: auto;
-  max-height: 100px;
 }
 .columns {
   display: flex;
@@ -79,20 +55,15 @@ img.avatar {
   display: inline-block;
   margin-right: 20px;
 }
-#btns > * {
-  margin-bottom: 10px;
-  margin-top: 10px;
+button {
+  margin-top: 4px;
 }
 hr {
   margin-top: 0;
 }
 
 .results {
-  height: calc(100vh - 210px);
-}
-
-header {
-  display: flex;
+  height: calc(100vh - 240px);
 }
 
 @media screen and (max-width: 800px) {
@@ -122,4 +93,9 @@ header {
     margin-top: 10px;
     width: 100%;
   }
+}
+
+.MuiSelect-select.MuiSelect-outlined, .MuiOutlinedInput-input {
+  font-size: 14px !important;
+  line-height: 20px !important;
 }

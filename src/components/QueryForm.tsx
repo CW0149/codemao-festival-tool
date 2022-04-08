@@ -1,9 +1,20 @@
 import { styled } from "@mui/material/styles";
-import { Button, Divider } from "@mui/material";
+import {
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+} from "@mui/material";
 import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 import { ClassData, FormData, FormDataKey } from "../constants/types";
 import { classDataToClassInfo } from "../helpers";
+import { Box } from "@mui/system";
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
@@ -92,123 +103,163 @@ const QueryForm: FC<QueryFormProps> = ({
   );
 
   return (
-    <div className="form_wrapper">
-      <div className="form_item">
-        <label>
-          <span>公司邮箱</span>
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => {
-              const newValue = e.target.value.trim();
+    <Grid container spacing={1}>
+      <Grid item xs={12}>
+        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <TextField
+                size="small"
+                fullWidth
+                label="公司邮箱"
+                value={email}
+                onChange={(e) => {
+                  const newValue = e.target.value.trim();
 
-              setEmail(newValue);
-              modifyEmail(newValue);
-            }}
-            placeholder="可选，若归属人有重名必填"
-          />
-        </label>
-      </div>
-      <div className="form_item">
-        <label>
-          <span>班级</span>
-          <select
-            value={formData.classInfo}
-            onChange={(e) => modifyFormData("classInfo", e.target.value.trim())}
-          >
-            {ownerClassesData?.map((classData) => (
-              <option key={classData.class_id}>
-                {classDataToClassInfo(classData)}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <StyledDivider variant="middle" />
+                  setEmail(newValue);
+                  modifyEmail(newValue);
+                }}
+                placeholder="可选，若归属人有重名必填"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <InputLabel>班级</InputLabel>
+                <Select
+                  size="small"
+                  label="班级"
+                  value={formData.classInfo}
+                  onChange={(e) =>
+                    modifyFormData("classInfo", e.target.value.trim())
+                  }
+                >
+                  {ownerClassesData?.map((classData) => (
+                    <MenuItem
+                      key={classData.class_id}
+                      value={classDataToClassInfo(classData)}
+                    >
+                      {classDataToClassInfo(classData)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+      <Grid item xs={4}>
+        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                fullWidth
+                label="内部物料"
+                value={formData.shippingGoodsDesc}
+                onChange={(e) =>
+                  modifyFormData("shippingGoodsDesc", e.target.value.trim())
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                id="logistic_btn"
+                fullWidth
+                variant="contained"
+                size="small"
+                disabled={getLogisticDisabled}
+                onClick={onQueryLogistics}
+              >
+                获取物流信息
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
 
-      <div className="form_item">
-        <label>
-          <span>内部物料</span>
-          <input
-            type="text"
-            style={{ width: "300px" }}
-            value={formData.shippingGoodsDesc}
-            onChange={(e) =>
-              modifyFormData("shippingGoodsDesc", e.target.value.trim())
-            }
-          />
-        </label>
-      </div>
-      <Button
-        id="logistic_btn"
-        variant="contained"
-        disabled={getLogisticDisabled}
-        onClick={onQueryLogistics}
-      >
-        获取物流信息
-      </Button>
-      <StyledDivider variant="middle" />
+      <Grid item xs={4}>
+        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                fullWidth
+                label="学生来自"
+                value={formData.packageName}
+                onChange={(e) =>
+                  modifyFormData("packageName", e.target.value.trim())
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                id="logistic_btn"
+                fullWidth
+                variant="contained"
+                size="small"
+                disabled={getPreviousClassInfoDisabled}
+                onClick={onQueryPreviousClassInfo}
+              >
+                获取原班主任信息
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
 
-      <div className="form_item">
-        <label>
-          <span>学生来自</span>
-          <input
-            type="text"
-            style={{ width: "300px" }}
-            value={formData.packageName}
-            onChange={(e) =>
-              modifyFormData("packageName", e.target.value.trim())
-            }
-          />
-        </label>
-      </div>
-      <Button
-        id="logistic_btn"
-        variant="contained"
-        disabled={getPreviousClassInfoDisabled}
-        onClick={onQueryPreviousClassInfo}
-      >
-        获取原班主任信息
-      </Button>
-      <StyledDivider variant="middle" />
-
-      <div className="form_item">
-        <label>
-          <span>项目链接名称</span>
-          <input
-            type="text"
-            id="work_name"
-            value={formData.workName}
-            onChange={(e) => modifyFormData("workName", e.target.value.trim())}
-            placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
-          />
-        </label>
-      </div>
-
-      <div id="btns">
-        <Button
-          variant="contained"
-          disabled={queryDisabled}
-          onClick={queryHandler}
-          style={{ marginRight: "10px" }}
-        >
-          查询已购买{"|"}已领单
-        </Button>
-        <Button
-          variant="contained"
-          disabled={claimDisabled}
-          onClick={clickHandler}
-          color="error"
-        >
-          点我自动领单
-        </Button>
-      </div>
-    </div>
+      <Grid item xs={4}>
+        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                fullWidth
+                label="项目链接名称"
+                id="work_name"
+                value={formData.workName}
+                onChange={(e) =>
+                  modifyFormData("workName", e.target.value.trim())
+                }
+                placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    fullWidth
+                    disabled={queryDisabled}
+                    onClick={queryHandler}
+                    style={{ marginRight: "10px" }}
+                  >
+                    查询已购买{"|"}已领单
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    fullWidth
+                    disabled={claimDisabled}
+                    onClick={clickHandler}
+                    color="error"
+                  >
+                    点我自动领单
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+    </Grid>
   );
 };
 
 const StyledDivider = styled(Divider)(() => ({
-  margin: "10px 0 0 0",
+  margin: "10px 0 10px 0",
   borderStyle: "dotted",
 }));
 

@@ -27,7 +27,7 @@ import {
   testHasAccess,
 } from "./helpers/requests";
 import { formData as MockedFormData } from "./mocks/formData";
-import { Button } from "@mui/material";
+import { Box, Button, Divider, Grid } from "@mui/material";
 import { getColumns } from "./constants/columns";
 
 const App: FC = () => {
@@ -213,56 +213,65 @@ const App: FC = () => {
 
   return (
     <div className="App">
-      <header>
-        <QueryForm
-          onQueryOrders={queryOrdersHandler}
-          onClaimOrders={claimOrdersHandler}
-          queryDisabled={queryDisabled}
-          claimDisabled={claimDisabled}
-          formData={formData}
-          setFormData={setFormData}
-          ownerClassesData={ownerClassesData}
-          getLogisticDisabled={getLogisticDisabled}
-          getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
-          onQueryLogistics={async () => {
-            setGetLogisticDisabled(true);
+      <Grid container spacing={1} alignItems="flex-end">
+        <Grid item md={10} xs={12}>
+          <QueryForm
+            onQueryOrders={queryOrdersHandler}
+            onClaimOrders={claimOrdersHandler}
+            queryDisabled={queryDisabled}
+            claimDisabled={claimDisabled}
+            formData={formData}
+            setFormData={setFormData}
+            ownerClassesData={ownerClassesData}
+            getLogisticDisabled={getLogisticDisabled}
+            getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
+            onQueryLogistics={async () => {
+              setGetLogisticDisabled(true);
 
-            const items = await getMatchedLogicsByPhones(
-              classStudents.map((stu) => stu.phone_number),
-              formData.shippingGoodsDesc
-            );
-            setLogisticItems(items);
-            setGetLogisticDisabled(false);
-          }}
-          onQueryPreviousClassInfo={async () => {
-            setGetPreviousClassInfoDisabled(true);
+              const items = await getMatchedLogicsByPhones(
+                classStudents.map((stu) => stu.phone_number),
+                formData.shippingGoodsDesc
+              );
+              setLogisticItems(items);
+              setGetLogisticDisabled(false);
+            }}
+            onQueryPreviousClassInfo={async () => {
+              setGetPreviousClassInfoDisabled(true);
 
-            const items = await getMatchedClassInfosByPackageNames(
-              classStudents.map((stu) => stu.user_id),
-              formData.packageName
-            );
-            setClassInfos(items);
-            setGetPreviousClassInfoDisabled(false);
-          }}
-        />
-        <div className="pc_btns">
-          <CsvDownloader
-            filename={`${formData.classInfo}`}
-            datas={rows}
-            columns={getColumns(
-              !!paidOrders.length,
-              !!claimedOrders.length,
-              !!logisticItems.length,
-              !!classInfos.length
-            ).map((item) => ({ id: item.id, displayName: item.label }))}
-          >
-            <Button variant="contained" onClick={exportTable}>
-              导出表格
-            </Button>
-          </CsvDownloader>
-        </div>
-      </header>
-      <hr />
+              const items = await getMatchedClassInfosByPackageNames(
+                classStudents.map((stu) => stu.user_id),
+                formData.packageName
+              );
+              setClassInfos(items);
+              setGetPreviousClassInfoDisabled(false);
+            }}
+          />
+        </Grid>
+        <Grid item md={2} xs={0}>
+          <Box sx={{ p: 1, background: "#fff" }}>
+            <CsvDownloader
+              filename={`${formData.classInfo}`}
+              datas={rows}
+              columns={getColumns(
+                !!paidOrders.length,
+                !!claimedOrders.length,
+                !!logisticItems.length,
+                !!classInfos.length
+              ).map((item) => ({ id: item.id, displayName: item.label }))}
+            >
+              <Button
+                variant="contained"
+                size="small"
+                onClick={exportTable}
+                sx={{ width: "100%" }}
+              >
+                导出表格
+              </Button>
+            </CsvDownloader>
+          </Box>
+        </Grid>
+      </Grid>
+      <Divider sx={{ margin: "10px 0" }} />
 
       <div className="results">
         <Summary
