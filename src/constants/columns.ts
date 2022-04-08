@@ -60,12 +60,12 @@ export const getColumns = (
             label: "审核状态",
           },
           {
-            id: "deliveryTime",
-            label: "发货时间",
-          },
-          {
             id: "waybillStateValue",
             label: "发货状态",
+          },
+          {
+            id: "deliveryTime",
+            label: "发货时间",
           },
           {
             id: "logisticsType",

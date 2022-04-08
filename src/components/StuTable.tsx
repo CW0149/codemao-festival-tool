@@ -216,8 +216,8 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.createTime}</TableCell>
                       <TableCell>{row.createByName}</TableCell>
                       <TableCell>{row.auditStateValue}</TableCell>
-                      <TableCell>{row.deliveryTime}</TableCell>
                       <TableCell>{row.waybillStateValue}</TableCell>
+                      <TableCell>{row.deliveryTime}</TableCell>
                       <TableCell>{row.logisticsType}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
