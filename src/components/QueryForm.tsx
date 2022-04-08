@@ -104,10 +104,10 @@ const QueryForm: FC<QueryFormProps> = ({
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12}>
+      <Grid item md={12} xs={12}>
         <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
           <Grid container spacing={1}>
-            <Grid item xs={6}>
+            <Grid item md={6} xs={6}>
               <TextField
                 size="small"
                 fullWidth
@@ -122,7 +122,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 placeholder="可选，若归属人有重名必填"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item md={6} xs={6}>
               <FormControl fullWidth>
                 <InputLabel>班级</InputLabel>
                 <Select
@@ -147,10 +147,10 @@ const QueryForm: FC<QueryFormProps> = ({
           </Grid>
         </Box>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item md={4} xs={12}>
         <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <TextField
                 size="small"
                 fullWidth
@@ -161,12 +161,11 @@ const QueryForm: FC<QueryFormProps> = ({
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <Button
                 id="logistic_btn"
                 fullWidth
                 variant="contained"
-                size="small"
                 disabled={getLogisticDisabled}
                 onClick={onQueryLogistics}
               >
@@ -177,10 +176,10 @@ const QueryForm: FC<QueryFormProps> = ({
         </Box>
       </Grid>
 
-      <Grid item xs={4}>
+      <Grid item md={4} xs={12}>
         <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <TextField
                 size="small"
                 fullWidth
@@ -191,12 +190,11 @@ const QueryForm: FC<QueryFormProps> = ({
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <Button
                 id="logistic_btn"
                 fullWidth
                 variant="contained"
-                size="small"
                 disabled={getPreviousClassInfoDisabled}
                 onClick={onQueryPreviousClassInfo}
               >
@@ -207,10 +205,10 @@ const QueryForm: FC<QueryFormProps> = ({
         </Box>
       </Grid>
 
-      <Grid item xs={4}>
+      <Grid item md={4} xs={12}>
         <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <TextField
                 size="small"
                 fullWidth
@@ -223,30 +221,46 @@ const QueryForm: FC<QueryFormProps> = ({
                 placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item md={12} xs={6}>
               <Grid container spacing={1}>
-                <Grid item xs={6}>
+                <Grid item md={6} xs={6}>
                   <Button
                     variant="contained"
-                    size="small"
                     fullWidth
                     disabled={queryDisabled}
                     onClick={queryHandler}
                     style={{ marginRight: "10px" }}
                   >
-                    查询已购买{"|"}已领单
+                    <span
+                      style={{
+                        display: "inline-block",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
+                    >
+                      查询已购买{"|"}已领单
+                    </span>
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={6} xs={6}>
                   <Button
                     variant="contained"
-                    size="small"
                     fullWidth
                     disabled={claimDisabled}
                     onClick={clickHandler}
                     color="error"
                   >
-                    点我自动领单
+                    <span
+                      style={{
+                        display: "inline-block",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
+                    >
+                      点我自动领单
+                    </span>
                   </Button>
                 </Grid>
               </Grid>

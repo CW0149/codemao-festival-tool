@@ -3,7 +3,7 @@ html, body {
   background-color: #ddf2f763;
 }
 body {
-  padding: 10px 20px;
+  padding: 0.5rem;
   box-sizing: border-box;
 }
 .App {
@@ -51,48 +51,13 @@ img.avatar {
   vertical-align: middle;
   /* border-radius: 50%; */
 }
-#btns {
-  display: inline-block;
-  margin-right: 20px;
-}
-button {
-  margin-top: 4px;
-}
+
 hr {
   margin-top: 0;
 }
 
 .results {
   height: calc(100vh - 240px);
-}
-
-@media screen and (max-width: 800px) {
-  .App label > span {
-    text-align: right;
-    width: 100px;
-  }
-  .pc_btns {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .App input, .App select {
-    width: 100% !important;
-    margin-top: 0;
-  }
-  .App .form_item {
-    margin-right: 0;
-    display: block;
-  }
-  .App label > span {
-    text-align: center !important;
-    width: auto;
-  }
-  #logistic_btn {
-    margin-top: 10px;
-    width: 100%;
-  }
 }
 
 .MuiSelect-select.MuiSelect-outlined, .MuiOutlinedInput-input {

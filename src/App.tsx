@@ -247,7 +247,7 @@ const App: FC = () => {
             }}
           />
         </Grid>
-        <Grid item md={2} xs={0}>
+        <Grid item md={2} xs={12}>
           <Box sx={{ p: 1, background: "#fff" }}>
             <CsvDownloader
               filename={`${formData.classInfo}`}
@@ -261,7 +261,6 @@ const App: FC = () => {
             >
               <Button
                 variant="contained"
-                size="small"
                 onClick={exportTable}
                 sx={{ width: "100%" }}
               >
