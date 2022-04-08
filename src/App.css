@@ -57,7 +57,7 @@ hr {
 }
 
 .results {
-  height: calc(100vh - 240px);
+  height: calc(100vh - 244px);
 }
 
 .MuiSelect-select.MuiSelect-outlined, .MuiOutlinedInput-input {

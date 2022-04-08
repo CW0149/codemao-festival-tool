@@ -226,6 +226,7 @@ const StuTable: FC<StuTableProps> = ({
                   <TableCell>{row.consignee_name}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
+                  <TableCell>{row.phone_number_formatted}</TableCell>
 
                   <TableCell align="center">{row.province}</TableCell>
                   <TableCell align="center">{row.city}</TableCell>

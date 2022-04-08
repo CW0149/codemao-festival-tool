@@ -94,6 +94,10 @@ export const getColumns = (
       label: "用户电话",
     },
     {
+      id: "phone_number_formatted",
+      label: "格式化电话",
+    },
+    {
       id: "province",
       label: "省",
     },
@@ -142,13 +146,14 @@ export const getColumnMinWidth = (colId: string): string => {
     case "district":
       return "60px";
 
+    case "nickname":
     case "consignee_name":
     case "user_id":
       return "80px";
 
-    case "nickname":
-    case "phone":
-      return "120px";
+    case "phone_number":
+    case "phone_number_formatted":
+      return "140px";
 
     default:
       return "120px";

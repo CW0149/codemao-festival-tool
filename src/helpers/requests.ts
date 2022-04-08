@@ -289,6 +289,9 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     data.items.map((item: Student) => ({
       ...item,
       consignee_name: item.parent_name || item.child_name,
+      phone_number_formatted: item.phone_number
+        .replace(/\s/g, "")
+        .replace(/(\d{3})(\d{0,4})(\d{0,4})/, "$1-$2-$3"),
     }))
   );
 };
