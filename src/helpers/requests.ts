@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   postFestivalData,
   getFestivalData,
@@ -299,6 +300,12 @@ export const getLogisticsByPhone = (phone: string) => {
     (data?.data?.items ?? []).map((item: LogisticItem) => ({
       ...item,
       phone,
+      createTime: item.createTime
+        ? dayjs(item.createTime * 1000).format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      deliveryTime: item.deliveryTime
+        ? dayjs(item.deliveryTime * 1000).format("YYYY-MM-DD HH:mm:ss")
+        : "",
     }))
   );
 };

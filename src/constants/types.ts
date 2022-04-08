@@ -195,6 +195,7 @@ export type LogisticItem = {
   consigneeId: number;
   shippingGoodsDesc: string;
   logisticsState: string;
+  waybillStateValue: string;
   deliveryWaybillNo: string;
   consigneePhone: string;
   consigneeName: string;
@@ -203,6 +204,11 @@ export type LogisticItem = {
   county: string;
   streetAddress: string;
   phone: string; // used for indexing, not returned from endpoint
+  createTime: number;
+  deliveryTime: number;
+  createByName: string;
+  logisticsType: string;
+  auditStateValue: string;
   [key: string]: any;
 };
 

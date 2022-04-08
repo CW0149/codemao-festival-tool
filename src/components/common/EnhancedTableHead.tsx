@@ -13,6 +13,7 @@ export interface HeadCell {
   numeric?: boolean;
   align?: TableCellProps["align"];
   sortable?: boolean;
+  minWidth?: string;
 }
 
 interface EnhancedTableProps {
@@ -35,6 +36,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) =>
           headCell.sortable ? (
             <TableCell
+              sx={{ minWidth: headCell.minWidth }}
               key={headCell.id}
               align={headCell.align || (headCell.numeric ? "right" : "left")}
               padding={headCell.disablePadding ? "none" : "normal"}

@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import EnhancedTableHead, { HeadCell } from "./common/EnhancedTableHead";
 import { getComparator, Order } from "../helpers";
-import { getColumns } from "../constants/columns";
+import { getColumnMinWidth, getColumns } from "../constants/columns";
 
 export type StudentTableRow = Student & {
   paid?: string;
@@ -165,6 +165,7 @@ const StuTable: FC<StuTableProps> = ({
                   align: "center",
                   sortable: true,
                   disablePadding: true,
+                  minWidth: getColumnMinWidth(item.id),
                 } as HeadCell)
             )}
           />
@@ -211,8 +212,15 @@ const StuTable: FC<StuTableProps> = ({
                   {!!logisticItems.length && (
                     <>
                       <TableCell>{row.goodsDesc}</TableCell>
-                      <TableCell>{row.logisticsState}</TableCell>
+                      <TableCell>{row.shippingGoodsDesc}</TableCell>
+                      <TableCell>{row.createTime}</TableCell>
+                      <TableCell>{row.createByName}</TableCell>
+                      <TableCell>{row.auditStateValue}</TableCell>
+                      <TableCell>{row.deliveryTime}</TableCell>
+                      <TableCell>{row.waybillStateValue}</TableCell>
+                      <TableCell>{row.logisticsType}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
+                      <TableCell>{row.logisticsState}</TableCell>
                     </>
                   )}
                   <TableCell>{row.consignee_name}</TableCell>

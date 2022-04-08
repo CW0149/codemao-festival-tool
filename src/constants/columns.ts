@@ -44,12 +44,40 @@ export const getColumns = (
             label: "三方物料信息",
           },
           {
-            id: "logisticsState",
-            label: "物流状态",
+            id: "shippingGoodsDesc",
+            label: "内部物料信息",
+          },
+          {
+            id: "createTime",
+            label: "创建时间",
+          },
+          {
+            id: "createByName",
+            label: "创建人",
+          },
+          {
+            id: "auditStateValue",
+            label: "审核状态",
+          },
+          {
+            id: "deliveryTime",
+            label: "发货时间",
+          },
+          {
+            id: "waybillStateValue",
+            label: "发货状态",
+          },
+          {
+            id: "logisticsType",
+            label: "物流方式",
           },
           {
             id: "deliveryWaybillNo",
             label: "物流号",
+          },
+          {
+            id: "logisticsState",
+            label: "物流状态",
           },
         ]
       : []),
@@ -98,4 +126,31 @@ export const getColumns = (
         ]
       : []),
   ];
+};
+
+export const getColumnMinWidth = (colId: string): string => {
+  switch (colId) {
+    case "index":
+      return "0";
+
+    case "age":
+      return "40px";
+
+    case "child_name":
+    case "province":
+    case "city":
+    case "district":
+      return "60px";
+
+    case "consignee_name":
+    case "user_id":
+      return "80px";
+
+    case "nickname":
+    case "phone":
+      return "120px";
+
+    default:
+      return "120px";
+  }
 };
