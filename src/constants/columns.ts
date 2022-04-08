@@ -54,7 +54,7 @@ export const getColumns = (
         ]
       : []),
     {
-      id: "parent_name",
+      id: "consignee_name",
       label: "收件人姓名",
     },
     {

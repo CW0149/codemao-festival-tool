@@ -12,6 +12,7 @@ import {
   Order,
   OrderData,
   OwnerData,
+  Student,
 } from "../constants/types";
 
 /**
@@ -283,7 +284,12 @@ export const getStudentsByClass = (classId: number, termId: number) => {
   return postCrmData("http://42.194.164.225:3000/class/students", {
     class_id: classId,
     term_id: termId,
-  }).then((data) => data.items);
+  }).then((data) =>
+    data.items.map((item: Student) => ({
+      ...item,
+      consignee_name: item.parent_name || item.child_name,
+    }))
+  );
 };
 
 export const getLogisticsByPhone = (phone: string) => {
@@ -326,9 +332,7 @@ export const getMatchedLogicsByPhones = async (
   shippingGoodsDesc: string
 ) => {
   return Promise.all(
-    ["15871653121"].map((phone) =>
-      getMatchedLogicsByPhone(phone, shippingGoodsDesc)
-    )
+    phones.map((phone) => getMatchedLogicsByPhone(phone, shippingGoodsDesc))
   );
 };
 
@@ -345,17 +349,6 @@ const filterUserClassInfoByPackageName = (
   classInfo: ClassInfo[],
   packageName: string
 ) => {
-  console.log(
-    classInfo,
-    classInfo
-      .filter((item) => item.package_name.trim() === packageName.trim())
-      .reduce((_, item) => {
-        return Object.keys(item).reduce((res: any, key) => {
-          res[key] = res[key] || "" + item[key as keyof ClassInfo] || "";
-          return res;
-        }, {});
-      }, {} as ClassInfo)
-  );
   return classInfo
     .filter((item) => item.package_name.trim() === packageName.trim())
     .reduce((_, item) => {

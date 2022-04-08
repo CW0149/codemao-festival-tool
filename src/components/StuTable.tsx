@@ -96,6 +96,7 @@ const StuTable: FC<StuTableProps> = ({
           return {
             ...row,
             ...phoneToItem[row.phone_number],
+            consignee_name: row.consigneeName || row.consignee_name,
           };
         });
       });
@@ -214,7 +215,7 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
                     </>
                   )}
-                  <TableCell>{row.parent_name || row.child_name}</TableCell>
+                  <TableCell>{row.consignee_name}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
 
@@ -230,8 +231,6 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.teacher_nickname}</TableCell>
                     </>
                   )}
-
-                  {/* <TableCell>{row.follow_up_desc}</TableCell> */}
                 </StyledTableRow>
               ))}
           </TableBody>
