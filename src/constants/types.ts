@@ -184,22 +184,23 @@ export type ValidOrderData = {
 };
 export type OrderData = ValidOrderData | null;
 export type ClassData = Record<Partial<ClassDataKeys>, any>;
-export type StudentBE = Record<Partial<StudentKeys>, any>;
-export type Student = Pick<
-  StudentBE,
-  | 'user_id'
-  | 'nickname'
-  | 'child_name'
-  | 'parent_name'
-  | 'age'
-  | 'avatar_url'
-  | 'phone_number'
-  | 'province'
-  | 'city'
-  | 'district'
-  | 'address'
->;
 
+export type StudentBE = Record<Partial<StudentKeys>, any>;
+export type Student = {
+  user_id: number;
+  age: number;
+  child_name: string;
+  parent_name: string;
+  nickname: string;
+  avatar_url: string;
+  phone_number: string;
+  province: string;
+  city: string;
+  district: string;
+  address: string;
+  contact_name: string;
+  phone_number_formatted: string;
+};
 export type FormData = typeof formData;
 export type FormDataKey = keyof FormData;
 
@@ -247,6 +248,21 @@ export type LogisticItem = {
   delivery_address: string; // full address
 };
 
+export type ClassInfoBE = {
+  class_id: number;
+  class_name: string;
+  course_end_date: number;
+  course_start_date: number;
+  course_state: string;
+  package_name: string;
+  teacher_id: number;
+  teacher_name: string;
+  teacher_nickname: string;
+  term_id: number;
+  term_name: string;
+  user_id: number;
+};
+
 export type ClassInfo = {
   class_id: number;
   class_name: string;
@@ -259,5 +275,5 @@ export type ClassInfo = {
   teacher_nickname: string;
   term_id: number;
   term_name: string;
-  user_id: string;
+  user_id: number;
 };

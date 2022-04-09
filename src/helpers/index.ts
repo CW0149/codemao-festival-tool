@@ -96,13 +96,13 @@ export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-export const formatPhone = (phone: string) => {
+export const formatPhone = (phone: string): string => {
   return phone
     .replace(/\s/g, '')
     .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1-$2-$3');
 };
 
-export const encodePhone = (phone: string) => {
+export const encodePhone = (phone: string): string => {
   return phone
     .replace(/\s/g, '')
     .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1****$3');

@@ -166,7 +166,7 @@ const App: FC = () => {
 
     setQueryDisabled(true);
 
-    const ids = classStudents.map((stu) => stu.user_id);
+    const ids = classStudents.map((stu) => String(stu.user_id));
     const hasAccess = await testHasAccess(formData.token, ids[0]);
 
     if (hasAccess) {

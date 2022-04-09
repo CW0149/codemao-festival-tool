@@ -97,26 +97,27 @@ const StuTable: FC<StuTableProps> = ({
 
       setRows((prevRows) => {
         return prevRows.map((row) => {
-          if (!phoneToItem[row.phone_number]) return row;
+          const logisticItem = phoneToItem[row.phone_number];
 
-          const shouldDeliveryAddress = `收货人: ${row.contact_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`;
+          if (!logisticItem) return row;
+
           let isAddressMatch = true;
 
           if (
-            encodePhone(row?.phone_number) !== row.consignee_phone ||
-            row.province !== row.consignee_province ||
-            row.city !== row.consignee_city ||
-            row.district !== row.consignee_district ||
-            row.address !== row.consignee_address
+            encodePhone(row?.phone_number) !== logisticItem.consignee_phone ||
+            row.province !== logisticItem.consignee_province ||
+            row.city !== logisticItem.consignee_city ||
+            row.district !== logisticItem.consignee_district ||
+            row.address !== logisticItem.consignee_address
           ) {
             isAddressMatch = false;
           }
 
           return {
             ...row,
-            ...phoneToItem[row.phone_number],
-            should_delivery_address: shouldDeliveryAddress,
-            address_correct_status: row.logistics_type
+            ...logisticItem,
+            should_delivery_address: `收货人: ${row.contact_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`,
+            address_correct_status: logisticItem.logistics_type
               ? isAddressMatch
                 ? '是'
                 : '否'

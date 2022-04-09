@@ -10,6 +10,7 @@ import {
 import {
   ClassData,
   ClassInfo,
+  ClassInfoBE,
   LogisticItem,
   LogisticItemBE,
   Order,
@@ -289,11 +290,23 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     class_id: classId,
     term_id: termId,
   }).then((data) =>
-    data.items.map((item: StudentBE) => ({
-      ...item,
-      contact_name: item.parent_name || item.child_name,
-      phone_number_formatted: formatPhone(item.phone_number),
-    }))
+    data.items.map(
+      (item: StudentBE): Student => ({
+        user_id: item.user_id,
+        age: item.age,
+        nickname: item.nickname?.trim() || '',
+        child_name: item.child_name?.trim() || '',
+        parent_name: item.parent_name?.trim() || '',
+        avatar_url: item.avatar_url?.trim() || '',
+        phone_number: item.phone_number?.trim() || '',
+        province: item.province?.trim() || '',
+        city: item.city?.trim() || '',
+        district: item.district?.trim() || '',
+        address: item.address?.trim() || '',
+        contact_name: (item.parent_name || item.child_name)?.trim(),
+        phone_number_formatted: formatPhone(item.phone_number)?.trim(),
+      })
+    )
   );
 };
 
@@ -364,12 +377,14 @@ export const getMatchedLogicsByPhones = async (
   );
 };
 
-export const getUserClassInfo = (userId: string): Promise<ClassInfo[]> => {
+export const getUserClassInfo = (userId: number): Promise<ClassInfo[]> => {
   return getCrmData(`http://42.194.164.225:3000/users/${userId}`).then((data) =>
-    (data?.class_info ?? []).map((item: ClassInfo) => ({
-      ...item,
-      user_id: userId,
-    }))
+    (data?.class_info ?? []).map(
+      (item: ClassInfoBE): ClassInfo => ({
+        ...item,
+        user_id: userId,
+      })
+    )
   );
 };
 
@@ -388,7 +403,7 @@ const filterUserClassInfoByPackageName = (
 };
 
 const getUserMatchedClassInfoByPackageName = async (
-  userId: string,
+  userId: number,
   packageName: string
 ) => {
   const items = await getUserClassInfo(userId);
@@ -396,7 +411,7 @@ const getUserMatchedClassInfoByPackageName = async (
 };
 
 export const getMatchedClassInfosByPackageNames = async (
-  userIds: string[],
+  userIds: number[],
   packageName: string
 ) => {
   return Promise.all(
