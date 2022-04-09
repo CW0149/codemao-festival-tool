@@ -40,31 +40,31 @@ export const getColumns = (
     ...(hasLogisticItems
       ? [
           {
-            id: 'goodsDesc',
+            id: 'goods_desc',
             label: '三方物料信息',
           },
           {
-            id: 'shippingGoodsDesc',
+            id: 'shipping_goods_desc',
             label: '内部物料信息',
           },
           {
-            id: 'createTime',
+            id: 'create_time',
             label: '创建时间',
           },
           {
-            id: 'createByName',
+            id: 'create_by_name',
             label: '创建人',
           },
           {
-            id: 'auditStateValue',
+            id: 'audit_state_value',
             label: '审核状态',
           },
           {
-            id: 'waybillStateValue',
+            id: 'waybill_state_value',
             label: '发货状态',
           },
           {
-            id: 'deliveryTime',
+            id: 'delivery_time',
             label: '发货时间',
           },
           {
@@ -80,21 +80,21 @@ export const getColumns = (
             label: '发货地址是否匹配',
           },
           {
-            id: 'logisticsType',
+            id: 'logistics_type',
             label: '物流方式',
           },
           {
-            id: 'deliveryWaybillNo',
+            id: 'delivery_waybill_no',
             label: '物流号',
           },
           {
-            id: 'logisticsState',
+            id: 'logistics_state',
             label: '物流状态',
           },
         ]
       : []),
     {
-      id: 'consignee_name',
+      id: 'contact_name',
       label: '联系姓名',
     },
     {
@@ -159,7 +159,7 @@ export const getColumnMinWidth = (colId: string): string => {
       return '60px';
 
     case 'nickname':
-    case 'consignee_name':
+    case 'contact_name':
     case 'user_id':
       return '80px';
 

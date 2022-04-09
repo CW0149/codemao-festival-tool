@@ -14,6 +14,12 @@ import { getColumnMinWidth, getColumns } from '../constants/columns';
 export type StudentTableRow = Student & {
   paid?: string;
   claimed?: string;
+  index?: number;
+  should_delivery_address?: string;
+  address_correct_status?: string;
+  contact_name?: string;
+  phone_number_formatted?: string;
+  [key: string]: any;
 } & Partial<LogisticItem> &
   Partial<ClassInfo>;
 
@@ -93,23 +99,15 @@ const StuTable: FC<StuTableProps> = ({
         return prevRows.map((row) => {
           if (!phoneToItem[row.phone_number]) return row;
 
-          const shouldDeliveryAddress = `收货人: ${row.consignee_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`;
+          const shouldDeliveryAddress = `收货人: ${row.contact_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`;
           let isAddressMatch = true;
 
-          // console.log(row.consignee_name, row.consigneeName);
-          // console.log(encodePhone(row.phone_number), row.consigneePhone);
-          // console.log(row.province, row.consigneeProvince);
-          // console.log(row.city, row.consigneeCity);
-          // console.log(row.district, row.consigneeDistrict);
-          // console.log(row.address, row.consigneeAddress);
-
           if (
-            encodePhone(row?.phone_number)?.trim() !==
-              row.consigneePhone?.trim() ||
-            row.province?.trim() !== row.consigneeProvince?.trim() ||
-            row.city?.trim() !== row.consigneeCity?.trim() ||
-            row.district?.trim() !== row.consigneeDistrict?.trim() ||
-            row.address?.trim() !== row.consigneeAddress?.trim()
+            encodePhone(row?.phone_number) !== row.consignee_phone ||
+            row.province !== row.consignee_province ||
+            row.city !== row.consignee_city ||
+            row.district !== row.consignee_district ||
+            row.address !== row.consignee_address
           ) {
             isAddressMatch = false;
           }
@@ -118,7 +116,7 @@ const StuTable: FC<StuTableProps> = ({
             ...row,
             ...phoneToItem[row.phone_number],
             should_delivery_address: shouldDeliveryAddress,
-            address_correct_status: row.logisticsType
+            address_correct_status: row.logistics_type
               ? isAddressMatch
                 ? '是'
                 : '否'
@@ -127,6 +125,7 @@ const StuTable: FC<StuTableProps> = ({
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logisticItems]);
 
   useEffect(() => {
@@ -149,6 +148,7 @@ const StuTable: FC<StuTableProps> = ({
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classInfos]);
 
   if (!data.length) return null;
@@ -204,7 +204,7 @@ const StuTable: FC<StuTableProps> = ({
                   key={row.user_id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell>{row.index + 1}</TableCell>
+                  <TableCell>{row.index ?? 0 + 1}</TableCell>
                   <TableCell sx={{ maxWidth: '100px' }}>
                     <img src={row.avatar_url} className="avatar" alt="avatar" />
                     &nbsp;
@@ -237,13 +237,13 @@ const StuTable: FC<StuTableProps> = ({
 
                   {!!logisticItems.length && (
                     <>
-                      <TableCell>{row.goodsDesc}</TableCell>
-                      <TableCell>{row.shippingGoodsDesc}</TableCell>
-                      <TableCell>{row.createTime}</TableCell>
-                      <TableCell>{row.createByName}</TableCell>
-                      <TableCell>{row.auditStateValue}</TableCell>
-                      <TableCell>{row.waybillStateValue}</TableCell>
-                      <TableCell>{row.deliveryTime}</TableCell>
+                      <TableCell>{row.goods_desc}</TableCell>
+                      <TableCell>{row.shipping_goods_desc}</TableCell>
+                      <TableCell>{row.create_time}</TableCell>
+                      <TableCell>{row.create_by_name}</TableCell>
+                      <TableCell>{row.audit_state_value}</TableCell>
+                      <TableCell>{row.waybill_state_value}</TableCell>
+                      <TableCell>{row.delivery_time}</TableCell>
                       <TableCell>{row.delivery_address}</TableCell>
                       <TableCell>{row.should_delivery_address}</TableCell>
                       <TableCell>
@@ -258,12 +258,12 @@ const StuTable: FC<StuTableProps> = ({
                           {row.address_correct_status}
                         </span>
                       </TableCell>
-                      <TableCell>{row.logisticsType}</TableCell>
-                      <TableCell>{row.deliveryWaybillNo}</TableCell>
-                      <TableCell>{row.logisticsState}</TableCell>
+                      <TableCell>{row.logistics_type}</TableCell>
+                      <TableCell>{row.delivery_waybill_no}</TableCell>
+                      <TableCell>{row.logistics_state}</TableCell>
                     </>
                   )}
-                  <TableCell>{row.consignee_name}</TableCell>
+                  <TableCell>{row.contact_name}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
                   <TableCell>{row.phone_number_formatted}</TableCell>

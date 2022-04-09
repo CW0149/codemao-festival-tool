@@ -184,15 +184,30 @@ export type ValidOrderData = {
 };
 export type OrderData = ValidOrderData | null;
 export type ClassData = Record<Partial<ClassDataKeys>, any>;
-export type Student = Record<Partial<StudentKeys>, any>;
+export type StudentBE = Record<Partial<StudentKeys>, any>;
+export type Student = Pick<
+  StudentBE,
+  | 'user_id'
+  | 'nickname'
+  | 'child_name'
+  | 'parent_name'
+  | 'age'
+  | 'avatar_url'
+  | 'phone_number'
+  | 'province'
+  | 'city'
+  | 'district'
+  | 'address'
+>;
 
 export type FormData = typeof formData;
 export type FormDataKey = keyof FormData;
 
 export type ApiResponse = { res: 'success' | 'error'; [key: string]: any };
 
-export type LogisticItem = {
+export type LogisticItemBE = {
   consigneeId: number;
+  goodsDesc: string;
   shippingGoodsDesc: string;
   logisticsState: string;
   waybillStateValue: string;
@@ -203,13 +218,33 @@ export type LogisticItem = {
   city: string;
   county: string;
   streetAddress: string;
-  phone: string; // used for indexing, not returned from endpoint
   createTime: number;
   deliveryTime: number;
   createByName: string;
   logisticsType: string;
   auditStateValue: string;
   [key: string]: any;
+};
+
+export type LogisticItem = {
+  phone: string; // used for indexing, not returned from endpoint
+  goods_desc: string;
+  shipping_goods_desc: string;
+  logistics_state: string;
+  waybill_state_value: string;
+  delivery_waybill_no: string;
+  consignee_phone: string;
+  consignee_name: string;
+  create_time: string;
+  delivery_time: string;
+  create_by_name: string;
+  logistics_type: string;
+  audit_state_value: string;
+  consignee_province: string;
+  consignee_city: string;
+  consignee_district: string;
+  consignee_address: string;
+  delivery_address: string; // full address
 };
 
 export type ClassInfo = {

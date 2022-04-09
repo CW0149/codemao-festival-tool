@@ -47,8 +47,7 @@ const QueryForm: FC<QueryFormProps> = ({
     if (!ownerClassesData?.length) return;
 
     const selected = ownerClassesData.find(
-      (classData) =>
-        classDataToClassInfo(classData) === formData.classInfo.trim()
+      (classData) => classDataToClassInfo(classData) === formData.classInfo
     );
 
     modifyFormData(
@@ -61,7 +60,7 @@ const QueryForm: FC<QueryFormProps> = ({
 
   const modifyFormData = (key: FormDataKey, value: string) => {
     setFormData((prevData) => {
-      return { ...prevData, [key]: value };
+      return { ...prevData, [key]: value?.trim() };
     });
   };
 
@@ -114,7 +113,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 label="公司邮箱"
                 value={email}
                 onChange={(e) => {
-                  const newValue = e.target.value.trim();
+                  const newValue = e.target.value;
 
                   setEmail(newValue);
                   modifyEmail(newValue);
@@ -129,9 +128,7 @@ const QueryForm: FC<QueryFormProps> = ({
                   size="small"
                   label="班级"
                   value={formData.classInfo}
-                  onChange={(e) =>
-                    modifyFormData('classInfo', e.target.value.trim())
-                  }
+                  onChange={(e) => modifyFormData('classInfo', e.target.value)}
                 >
                   {ownerClassesData?.map((classData) => (
                     <MenuItem
@@ -157,7 +154,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 label="内部物料"
                 value={formData.shippingGoodsDesc}
                 onChange={(e) =>
-                  modifyFormData('shippingGoodsDesc', e.target.value.trim())
+                  modifyFormData('shippingGoodsDesc', e.target.value)
                 }
               />
             </Grid>
@@ -185,9 +182,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 fullWidth
                 label="学生来自"
                 value={formData.packageName}
-                onChange={(e) =>
-                  modifyFormData('packageName', e.target.value.trim())
-                }
+                onChange={(e) => modifyFormData('packageName', e.target.value)}
               />
             </Grid>
             <Grid item md={12} xs={6}>
@@ -215,9 +210,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 label="项目链接名称"
                 id="work_name"
                 value={formData.workName}
-                onChange={(e) =>
-                  modifyFormData('workName', e.target.value.trim())
-                }
+                onChange={(e) => modifyFormData('workName', e.target.value)}
                 placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
               />
             </Grid>
@@ -271,10 +264,4 @@ const QueryForm: FC<QueryFormProps> = ({
     </Grid>
   );
 };
-
-const StyledDivider = styled(Divider)(() => ({
-  margin: '10px 0 10px 0',
-  borderStyle: 'dotted',
-}));
-
 export default QueryForm;

@@ -24,7 +24,7 @@ const Summary: FC<SummaryProps> = ({
         <div>
           <strong>未被我认领用户信息：</strong>
           {notClaimedOrders.map((order) => (
-            <div>
+            <div key={order.user_id}>
               {order.user_id} {order.username}{' '}
               {order.flagid_name ? `[${order.flagid_name}]` : ''}
             </div>

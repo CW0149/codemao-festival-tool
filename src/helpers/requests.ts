@@ -11,10 +11,12 @@ import {
   ClassData,
   ClassInfo,
   LogisticItem,
+  LogisticItemBE,
   Order,
   OrderData,
   OwnerData,
   Student,
+  StudentBE,
 } from '../constants/types';
 
 /**
@@ -84,7 +86,7 @@ const getOrderDataByUser = async (
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
       const data: OrderData = { order: info[i], paid: true };
-      if (info[i].flagid_name.trim() === ownerName.trim()) {
+      if (info[i].flagid_name === ownerName) {
         data.claimed = true;
       }
       return data;
@@ -227,7 +229,7 @@ export const filterOutClassData = (
   if (!classesData) return null;
 
   for (let classData of classesData) {
-    if (classDataToClassInfo(classData).trim() === classInfo.trim()) {
+    if (classDataToClassInfo(classData) === classInfo) {
       return classData;
     }
   }
@@ -287,9 +289,9 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     class_id: classId,
     term_id: termId,
   }).then((data) =>
-    data.items.map((item: Student) => ({
+    data.items.map((item: StudentBE) => ({
       ...item,
-      consignee_name: item.parent_name || item.child_name,
+      contact_name: item.parent_name || item.child_name,
       phone_number_formatted: formatPhone(item.phone_number),
     }))
   );
@@ -299,45 +301,47 @@ export const getLogisticsByPhone = (phone: string) => {
   return postCrmData('http://42.194.164.225:3000/student/logistics', {
     phone,
   }).then((data) =>
-    (data?.data?.items ?? []).map((item: LogisticItem) => ({
-      phone,
-      goodsDesc: item.goodsDesc || '',
-      shippingGoodsDesc: item.shippingGoodsDesc || '',
-      createByName: item.createByName || '',
-      auditStateValue: item.auditStateValue || '',
-      waybillStateValue: item.waybillStateValue || '',
-      logisticsType: item.logisticsType || '',
-      deliveryWaybillNo: item.deliveryWaybillNo || '',
-      logisticsState: item.logisticsState || '',
-      consigneeName: item.consigneeName || '',
-      consigneePhone: item.consigneePhone || '',
-      consigneeProvince: item.province || '',
-      consigneeCity: item.city || '',
-      consigneeDistrict: item.county || '',
-      consigneeAddress: item.streetAddress || '',
+    (data?.data?.items ?? []).map(
+      (item: LogisticItemBE): LogisticItem => ({
+        phone,
+        goods_desc: item.goodsDesc?.trim() || '',
+        shipping_goods_desc: item.shippingGoodsDesc?.trim() || '',
+        create_by_name: item.createByName?.trim() || '',
+        audit_state_value: item.auditStateValue?.trim() || '',
+        waybill_state_value: item.waybillStateValue?.trim() || '',
+        logistics_type: item.logisticsType?.trim() || '',
+        delivery_waybill_no: item.deliveryWaybillNo?.trim() || '',
+        logistics_state: item.logisticsState?.trim() || '',
+        consignee_name: item.consigneeName?.trim() || '',
+        consignee_phone: item.consigneePhone?.trim() || '',
+        consignee_province: item.province?.trim() || '',
+        consignee_city: item.city?.trim() || '',
+        consignee_district: item.county?.trim() || '',
+        consignee_address: item.streetAddress?.trim() || '',
 
-      createTime: item.createTime
-        ? dayjs(item.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-        : '',
-      deliveryTime: item.deliveryTime
-        ? dayjs(item.deliveryTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-        : '',
-      delivery_address: `收货人: ${item.consigneeName} 联系电话: ${item.consigneePhone} 收货地址：${item.province}${item.city}${item.county}${item.streetAddress}`,
-    }))
+        create_time: item.createTime
+          ? dayjs(item.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+          : '',
+        delivery_time: item.deliveryTime
+          ? dayjs(item.deliveryTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+          : '',
+        delivery_address: `收货人: ${item.consigneeName} 联系电话: ${item.consigneePhone} 收货地址：${item.province}${item.city}${item.county}${item.streetAddress}`,
+      })
+    )
   );
 };
 
 const filterLogisticsWithGoods = (
   logisticItems: LogisticItem[],
   shippingGoodsDesc: string
-) => {
+): LogisticItem => {
   return logisticItems
     .filter(
-      (item) => item.shippingGoodsDesc.trim() === shippingGoodsDesc.trim()
+      (item) => item.shipping_goods_desc.trim() === shippingGoodsDesc.trim()
     )
-    .reduce((_, item) => {
+    .reduce((_, item: LogisticItem) => {
       return Object.keys(item).reduce((res: any, key) => {
-        res[key] = res[key] || '' + item[key] || '';
+        res[key] = res[key] || '' + item[key as keyof LogisticItem] || '';
         return res;
       }, {});
     }, {} as LogisticItem);
