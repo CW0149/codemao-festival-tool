@@ -1,11 +1,11 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 import {
   postFestivalData,
   getFestivalData,
   postCrmData,
   classDataToClassInfo,
   getCrmData,
-} from ".";
+} from '.';
 import {
   ClassData,
   ClassInfo,
@@ -14,7 +14,7 @@ import {
   OrderData,
   OwnerData,
   Student,
-} from "../constants/types";
+} from '../constants/types';
 
 /**
  *
@@ -25,40 +25,40 @@ import {
 const queryOrder = (token: string, userId: string) => {
   return postFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/checkAddOrder",
+    'https://festival.codemao.cn/yyb2019/index/checkAddOrder',
     {
-      flag: "4",
-      work_name: "",
-      tit: "",
+      flag: '4',
+      work_name: '',
+      tit: '',
       times: [],
-      begin: "",
-      end: "",
+      begin: '',
+      end: '',
       totimes: [],
-      tobegin: "",
-      toend: "",
-      toflag: "all",
-      username: "",
-      tel: "",
+      tobegin: '',
+      toend: '',
+      toflag: 'all',
+      username: '',
+      tel: '',
       type: 2,
-      paytit: "",
+      paytit: '',
       user_id: userId,
-      login_name: "",
-      term_name: "",
-      teacher_name: "",
+      login_name: '',
+      term_name: '',
+      teacher_name: '',
       page: 1,
-      out_trade_no: "",
-      classinfo: "",
-      businessType: "all",
-      isflag: "",
-      teacher_email_1000: "",
-      teacher_email_16: "",
-      teacher_email_ti: "",
-      teacher_email_nian: "",
-      nickname: "",
-      claim_status: "all",
-      tianmaocode: "",
-      payment_method: "all",
-      hand_name: "",
+      out_trade_no: '',
+      classinfo: '',
+      businessType: 'all',
+      isflag: '',
+      teacher_email_1000: '',
+      teacher_email_16: '',
+      teacher_email_ti: '',
+      teacher_email_nian: '',
+      nickname: '',
+      claim_status: 'all',
+      tianmaocode: '',
+      payment_method: 'all',
+      hand_name: '',
       limit: 10,
     }
   );
@@ -73,7 +73,7 @@ const getOrderDataByUser = async (
   if (!token || !userId) return null;
 
   const res = await queryOrder(token, userId);
-  if (res.res === "error") {
+  if (res.res === 'error') {
     throw res.code;
   }
   if (res.count === 0) return null;
@@ -109,7 +109,7 @@ const claimOrder = (
   const sendDiff = {
     flagid, // staff ID
     classinfo: classInfo,
-    piclist: "",
+    piclist: '',
     belong_user_id: order.user_id,
     urltype: String(order.urltype), // there's type inconsistent
     tuan: String(order.tuan),
@@ -129,7 +129,7 @@ const claimOrder = (
 
   return postFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/editOrder",
+    'https://festival.codemao.cn/yyb2019/index/editOrder',
     toSend
   );
 };
@@ -137,7 +137,7 @@ const claimOrder = (
 const getLoginFlagid = (token: string): Promise<number | null> => {
   return getFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/info"
+    'https://festival.codemao.cn/yyb2019/index/info'
   ).then((res) => res?.info?.id ?? null);
 };
 
@@ -156,7 +156,7 @@ username: "yanluxia@codemao.cn"
 const getOwnerByName = (token: string, ownerName: string) => {
   return postFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/checkTeacherFilter",
+    'https://festival.codemao.cn/yyb2019/index/checkTeacherFilter',
     { name: ownerName }
   );
 };
@@ -182,7 +182,7 @@ export const getOwnerByEmail = (
 ): Promise<OwnerData> => {
   return postFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/checkAchievement",
+    'https://festival.codemao.cn/yyb2019/index/checkAchievement',
     { teacher: email }
   ).then((res) => {
     const { info } = res;
@@ -190,7 +190,7 @@ export const getOwnerByEmail = (
     if (info.length === 1) {
       return info[0];
     } else {
-      throw Error("未找到归属人信息");
+      throw Error('未找到归属人信息');
     }
   });
 };
@@ -211,7 +211,7 @@ res: 'success'
 export const getClassesData = (token: string, flagid: number) => {
   return postFestivalData(
     token,
-    "https://festival.codemao.cn/yyb2019/index/toClassInfoFn",
+    'https://festival.codemao.cn/yyb2019/index/toClassInfoFn',
     {
       toid: flagid,
       paytime: Math.floor(Date.now() / 1000),
@@ -235,11 +235,11 @@ export const filterOutClassData = (
 
 export const testHasAccess = async (token: string, userId: string) => {
   try {
-    await getOrderDataByUser(token, userId, "", "");
+    await getOrderDataByUser(token, userId, '', '');
     return true;
   } catch (errCode) {
     if (errCode === 50008) {
-      alert("账号已在别处登录");
+      alert('账号已在别处登录');
     }
     return false;
   }
@@ -277,12 +277,12 @@ export const claimOrders = async (
       )
     );
   } else {
-    throw Error("未找到班级信息");
+    throw Error('未找到班级信息');
   }
 };
 
 export const getStudentsByClass = (classId: number, termId: number) => {
-  return postCrmData("http://42.194.164.225:3000/class/students", {
+  return postCrmData('http://42.194.164.225:3000/class/students', {
     class_id: classId,
     term_id: termId,
   }).then((data) =>
@@ -290,25 +290,25 @@ export const getStudentsByClass = (classId: number, termId: number) => {
       ...item,
       consignee_name: item.parent_name || item.child_name,
       phone_number_formatted: item.phone_number
-        .replace(/\s/g, "")
-        .replace(/(\d{3})(\d{0,4})(\d{0,4})/, "$1-$2-$3"),
+        .replace(/\s/g, '')
+        .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1-$2-$3'),
     }))
   );
 };
 
 export const getLogisticsByPhone = (phone: string) => {
-  return postCrmData("http://42.194.164.225:3000/student/logistics", {
+  return postCrmData('http://42.194.164.225:3000/student/logistics', {
     phone,
   }).then((data) =>
     (data?.data?.items ?? []).map((item: LogisticItem) => ({
       ...item,
       phone,
       createTime: item.createTime
-        ? dayjs(item.createTime * 1000).format("YYYY-MM-DD HH:mm:ss")
-        : "",
+        ? dayjs(item.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+        : '',
       deliveryTime: item.deliveryTime
-        ? dayjs(item.deliveryTime * 1000).format("YYYY-MM-DD HH:mm:ss")
-        : "",
+        ? dayjs(item.deliveryTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+        : '',
     }))
   );
 };
@@ -323,7 +323,7 @@ const filterLogisticsWithGoods = (
     )
     .reduce((_, item) => {
       return Object.keys(item).reduce((res: any, key) => {
-        res[key] = res[key] || "" + item[key] || "";
+        res[key] = res[key] || '' + item[key] || '';
         return res;
       }, {});
     }, {} as LogisticItem);
@@ -363,7 +363,7 @@ const filterUserClassInfoByPackageName = (
     .filter((item) => item.package_name.trim() === packageName.trim())
     .reduce((_, item) => {
       return Object.keys(item).reduce((res: any, key) => {
-        res[key] = res[key] || "" + item[key as keyof ClassInfo] || "";
+        res[key] = res[key] || '' + item[key as keyof ClassInfo] || '';
         return res;
       }, {});
     }, {} as ClassInfo);

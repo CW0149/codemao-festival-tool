@@ -1,9 +1,9 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import CsvDownloader from "react-csv-downloader";
-import "./App.css";
-import QueryForm from "./components/QueryForm";
-import Summary from "./components/Summary";
-import StuTable, { StudentTableRow } from "./components/StuTable";
+import { FC, useEffect, useMemo, useState } from 'react';
+import CsvDownloader from 'react-csv-downloader';
+import './App.css';
+import QueryForm from './components/QueryForm';
+import Summary from './components/Summary';
+import StuTable, { StudentTableRow } from './components/StuTable';
 import {
   ClassData,
   ClassInfo,
@@ -14,7 +14,7 @@ import {
   OwnerData,
   Student,
   ValidOrderData,
-} from "./constants/types";
+} from './constants/types';
 import {
   claimOrders,
   filterOutClassData,
@@ -25,10 +25,10 @@ import {
   getOwnerByEmail,
   getStudentsByClass,
   testHasAccess,
-} from "./helpers/requests";
-import { formData as MockedFormData } from "./mocks/formData";
-import { Box, Button, Divider, Grid } from "@mui/material";
-import { getColumns } from "./constants/columns";
+} from './helpers/requests';
+import { formData as MockedFormData } from './mocks/formData';
+import { Box, Button, Divider, Grid } from '@mui/material';
+import { getColumns } from './constants/columns';
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
@@ -112,7 +112,7 @@ const App: FC = () => {
 
   const getClassesDataByEmail = async () => {
     try {
-      if (!formData.token) throw Error("请设置token");
+      if (!formData.token) throw Error('请设置token');
 
       getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
         setOwnerData(owner);
@@ -151,7 +151,7 @@ const App: FC = () => {
         setGetPreviousClassInfoDisabled(false);
 
         if (!classStudents?.length) {
-          alert("未获取到学生列表，请重试或刷新页面");
+          alert('未获取到学生列表，请重试或刷新页面');
         }
       }
     );
@@ -159,7 +159,7 @@ const App: FC = () => {
 
   const queryOrdersHandler = async (formData: FormData) => {
     if (!formData.token) {
-      console.log("请设置token");
+      console.log('请设置token');
       return;
     }
     if (!classStudents.length || !ownerData) return;
@@ -180,7 +180,7 @@ const App: FC = () => {
       );
       setOrdersData(ordersData);
     } else {
-      alert("登录已过期");
+      alert('登录已过期');
     }
 
     setQueryDisabled(false);
@@ -188,13 +188,13 @@ const App: FC = () => {
 
   const claimOrdersHandler = async (formData: FormData) => {
     if (!formData.token) {
-      console.log("请设置token");
+      console.log('请设置token');
       return;
     }
     if (!ownerData) return;
 
     if (!ordersData.length) {
-      alert("请先查询");
+      alert('请先查询');
     }
 
     if (notClaimedOrders.length) {
@@ -205,7 +205,7 @@ const App: FC = () => {
         ownerData
       );
       await queryOrdersHandler(formData);
-      alert("已重新获取数据，也可以去系统查看验证");
+      alert('已重新获取数据，也可以去系统查看验证');
     }
   };
 
@@ -248,7 +248,7 @@ const App: FC = () => {
           />
         </Grid>
         <Grid item md={2} xs={12}>
-          <Box sx={{ p: 1, background: "#fff" }}>
+          <Box sx={{ p: 1, background: '#fff' }}>
             <CsvDownloader
               filename={`${formData.classInfo}`}
               datas={rows}
@@ -262,7 +262,7 @@ const App: FC = () => {
               <Button
                 variant="contained"
                 onClick={exportTable}
-                sx={{ width: "100%" }}
+                sx={{ width: '100%' }}
               >
                 导出表格
               </Button>
@@ -270,7 +270,7 @@ const App: FC = () => {
           </Box>
         </Grid>
       </Grid>
-      <Divider sx={{ margin: "10px 0" }} />
+      <Divider sx={{ margin: '10px 0' }} />
 
       <div className="results">
         <Summary

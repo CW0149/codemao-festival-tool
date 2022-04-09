@@ -1,4 +1,4 @@
-import { styled } from "@mui/material/styles";
+import { styled } from '@mui/material/styles';
 import {
   Button,
   Divider,
@@ -6,15 +6,14 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   TextField,
-} from "@mui/material";
-import { FC, useCallback, useEffect, useState } from "react";
-import debounce from "lodash.debounce";
-import { ClassData, FormData, FormDataKey } from "../constants/types";
-import { classDataToClassInfo } from "../helpers";
-import { Box } from "@mui/system";
+} from '@mui/material';
+import { FC, useCallback, useEffect, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { ClassData, FormData, FormDataKey } from '../constants/types';
+import { classDataToClassInfo } from '../helpers';
+import { Box } from '@mui/system';
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
@@ -52,7 +51,7 @@ const QueryForm: FC<QueryFormProps> = ({
     );
 
     modifyFormData(
-      "classInfo",
+      'classInfo',
       classDataToClassInfo(selected || ownerClassesData?.[0])
     );
 
@@ -69,15 +68,15 @@ const QueryForm: FC<QueryFormProps> = ({
     let valid = true;
 
     if (!formData.token) {
-      alert("请输入token");
+      alert('请输入token');
       valid = false;
     }
     if (!formData.workName) {
-      alert("请输入项目链接名");
+      alert('请输入项目链接名');
       valid = false;
     }
     if (!formData.classInfo) {
-      alert("请输入班级");
+      alert('请输入班级');
       valid = false;
     }
     return valid;
@@ -97,7 +96,7 @@ const QueryForm: FC<QueryFormProps> = ({
 
   const modifyEmail = useCallback(
     debounce((value: string) => {
-      modifyFormData("ownerEmail", value);
+      modifyFormData('ownerEmail', value);
     }, 300),
     []
   );
@@ -105,7 +104,7 @@ const QueryForm: FC<QueryFormProps> = ({
   return (
     <Grid container spacing={1}>
       <Grid item md={12} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
           <Grid container spacing={1}>
             <Grid item md={6} xs={6}>
               <TextField
@@ -130,7 +129,7 @@ const QueryForm: FC<QueryFormProps> = ({
                   label="班级"
                   value={formData.classInfo}
                   onChange={(e) =>
-                    modifyFormData("classInfo", e.target.value.trim())
+                    modifyFormData('classInfo', e.target.value.trim())
                   }
                 >
                   {ownerClassesData?.map((classData) => (
@@ -148,7 +147,7 @@ const QueryForm: FC<QueryFormProps> = ({
         </Box>
       </Grid>
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -157,7 +156,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 label="内部物料"
                 value={formData.shippingGoodsDesc}
                 onChange={(e) =>
-                  modifyFormData("shippingGoodsDesc", e.target.value.trim())
+                  modifyFormData('shippingGoodsDesc', e.target.value.trim())
                 }
               />
             </Grid>
@@ -177,7 +176,7 @@ const QueryForm: FC<QueryFormProps> = ({
       </Grid>
 
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -186,7 +185,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 label="学生来自"
                 value={formData.packageName}
                 onChange={(e) =>
-                  modifyFormData("packageName", e.target.value.trim())
+                  modifyFormData('packageName', e.target.value.trim())
                 }
               />
             </Grid>
@@ -206,7 +205,7 @@ const QueryForm: FC<QueryFormProps> = ({
       </Grid>
 
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: "#fff", borderRadius: "4px" }}>
+        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -216,7 +215,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 id="work_name"
                 value={formData.workName}
                 onChange={(e) =>
-                  modifyFormData("workName", e.target.value.trim())
+                  modifyFormData('workName', e.target.value.trim())
                 }
                 placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
               />
@@ -229,17 +228,17 @@ const QueryForm: FC<QueryFormProps> = ({
                     fullWidth
                     disabled={queryDisabled}
                     onClick={queryHandler}
-                    style={{ marginRight: "10px" }}
+                    style={{ marginRight: '10px' }}
                   >
                     <span
                       style={{
-                        display: "inline-block",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
+                        display: 'inline-block',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
                       }}
                     >
-                      查询已购买{"|"}已领单
+                      查询已购买{'|'}已领单
                     </span>
                   </Button>
                 </Grid>
@@ -253,10 +252,10 @@ const QueryForm: FC<QueryFormProps> = ({
                   >
                     <span
                       style={{
-                        display: "inline-block",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
+                        display: 'inline-block',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
                       }}
                     >
                       点我自动领单
@@ -273,8 +272,8 @@ const QueryForm: FC<QueryFormProps> = ({
 };
 
 const StyledDivider = styled(Divider)(() => ({
-  margin: "10px 0 10px 0",
-  borderStyle: "dotted",
+  margin: '10px 0 10px 0',
+  borderStyle: 'dotted',
 }));
 
 export default QueryForm;

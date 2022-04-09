@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { Order, OrderData, Student } from "../constants/types";
+import { FC } from 'react';
+import { Order, OrderData, Student } from '../constants/types';
 
 type SummaryProps = {
   ordersData: OrderData[];
@@ -14,19 +14,19 @@ const Summary: FC<SummaryProps> = ({
   notClaimedOrders = [],
   paidOrders = [],
   claimedOrders = [],
-  classInfo = "",
+  classInfo = '',
   classStudents = [],
 }) => {
   return (
-    <div style={{ marginBottom: "10px" }}>
+    <div style={{ marginBottom: '10px' }}>
       {classInfo}[总:{classStudents.length}人]
       {notClaimedOrders.length ? (
         <div>
           <strong>未被我认领用户信息：</strong>
           {notClaimedOrders.map((order) => (
             <div>
-              {order.user_id} {order.username}{" "}
-              {order.flagid_name ? `[${order.flagid_name}]` : ""}
+              {order.user_id} {order.username}{' '}
+              {order.flagid_name ? `[${order.flagid_name}]` : ''}
             </div>
           ))}
           <hr />
@@ -40,7 +40,7 @@ const Summary: FC<SummaryProps> = ({
             {ordersData.length &&
               Number((paidOrders.length / ordersData.length) * 100).toFixed(
                 2
-              )}{" "}
+              )}{' '}
             %
           </strong>
           ] &nbsp; [已认领: {claimedOrders.length}人]
