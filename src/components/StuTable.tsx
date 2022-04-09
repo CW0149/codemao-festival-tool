@@ -215,11 +215,24 @@ const StuTable: FC<StuTableProps> = ({
                   key={row.user_id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell>{row.index ?? 0 + 1}</TableCell>
+                  <TableCell>{row.index}</TableCell>
                   <TableCell sx={{ maxWidth: '100px' }}>
                     <img src={row.avatar_url} className="avatar" alt="avatar" />
                     &nbsp;
-                    {row.nickname}
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: ' 60%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        lineHeight: '1',
+                        verticalAlign: 'middle',
+                      }}
+                      title={row.nickname}
+                    >
+                      {row.nickname}
+                    </span>
                   </TableCell>
                   <TableCell>{row.child_name}</TableCell>
                   {hasPaidOrders && (

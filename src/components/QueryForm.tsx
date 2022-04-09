@@ -21,8 +21,8 @@ type QueryFormProps = {
   onQueryLogistics: () => void;
   onQueryPreviousClassInfo: () => void;
   setFormData: (callback: (newData: FormData) => FormData) => void;
-  queryDisabled: boolean;
-  claimDisabled: boolean;
+  queryOrderDisabled: boolean;
+  claimOrderDisabled: boolean;
   getLogisticDisabled: boolean;
   getPreviousClassInfoDisabled: boolean;
   formData: FormData;
@@ -33,8 +33,8 @@ const QueryForm: FC<QueryFormProps> = ({
   onClaimOrders,
   onQueryLogistics,
   onQueryPreviousClassInfo,
-  queryDisabled,
-  claimDisabled,
+  queryOrderDisabled,
+  claimOrderDisabled,
   getLogisticDisabled,
   getPreviousClassInfoDisabled,
   setFormData,
@@ -220,7 +220,7 @@ const QueryForm: FC<QueryFormProps> = ({
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={queryDisabled}
+                    disabled={queryOrderDisabled}
                     onClick={queryHandler}
                     style={{ marginRight: '10px' }}
                   >
@@ -240,7 +240,7 @@ const QueryForm: FC<QueryFormProps> = ({
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={claimDisabled}
+                    disabled={claimOrderDisabled}
                     onClick={clickHandler}
                     color="error"
                   >

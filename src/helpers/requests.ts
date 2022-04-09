@@ -291,7 +291,8 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     term_id: termId,
   }).then((data) =>
     data.items.map(
-      (item: StudentBE): Student => ({
+      (item: StudentBE, i: number): Student => ({
+        index: i + 1,
         user_id: item.user_id,
         age: item.age,
         nickname: item.nickname?.trim() || '',

@@ -27,15 +27,24 @@ import {
   testHasAccess,
 } from './helpers/requests';
 import { formData as MockedFormData } from './mocks/formData';
-import { Box, Button, Divider, Grid } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Divider,
+  Grid,
+  Skeleton,
+} from '@mui/material';
 import { getColumns } from './constants/columns';
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
-  const [queryDisabled, setQueryDisabled] = useState(true);
+  const [queryOrderDisabled, setQueryOrderDisabled] = useState(true);
   const [getLogisticDisabled, setGetLogisticDisabled] = useState(true);
   const [getPreviousClassInfoDisabled, setGetPreviousClassInfoDisabled] =
     useState(true);
+  const [isQueryingStudents, setIsQueryingStudents] = useState(false);
 
   const [formData, setFormData] = useState<FormData>(MockedFormData);
   const [ownerData, setOwnerData] = useState<OwnerData>();
@@ -80,7 +89,7 @@ const App: FC = () => {
     return orders;
   }, [claimedOrderUserIds, paidOrders]);
 
-  const claimDisabled = useMemo(
+  const claimOrderDisabled = useMemo(
     () => !notClaimedOrders.length,
     [notClaimedOrders]
   );
@@ -88,7 +97,7 @@ const App: FC = () => {
   const [rows, setRows] = useState<StudentTableRow[]>([]);
 
   useEffect(() => {
-    if (classStudents && classStudents.length) {
+    if (classStudents) {
       setRows(classStudents);
     }
   }, [classStudents]);
@@ -110,6 +119,19 @@ const App: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.classInfo]);
 
+  useEffect(() => {
+    setQueryOrderDisabled(isQueryingStudents);
+    setGetLogisticDisabled(isQueryingStudents);
+    setGetPreviousClassInfoDisabled(isQueryingStudents);
+
+    if (isQueryingStudents) {
+      setClassStudents([]);
+      setOrdersData([]);
+      setLogisticItems([]);
+      setClassInfos([]);
+    }
+  }, [isQueryingStudents]);
+
   const getClassesDataByEmail = async () => {
     try {
       if (!formData.token) throw Error('请设置token');
@@ -119,12 +141,12 @@ const App: FC = () => {
         getClassesData(formData.token as string, owner.id).then(
           (classesData) => {
             setOwnerClassesData(classesData);
-            setQueryDisabled(false);
+            setQueryOrderDisabled(false);
           }
         );
       });
     } catch (err) {
-      setQueryDisabled(true);
+      setQueryOrderDisabled(true);
       alert(err);
     }
   };
@@ -135,20 +157,12 @@ const App: FC = () => {
     const classData = filterOutClassData(formData.classInfo, ownerClassesData);
     if (!classData) return;
 
-    setQueryDisabled(true);
-    setGetLogisticDisabled(true);
-    setGetPreviousClassInfoDisabled(true);
-    setClassStudents([]);
-    setOrdersData([]);
-    setLogisticItems([]);
-    setClassInfos([]);
+    setIsQueryingStudents(true);
 
     getStudentsByClass(classData.class_id, classData.term_id).then(
       (classStudents = []) => {
+        setIsQueryingStudents(false);
         setClassStudents(classStudents);
-        setQueryDisabled(false);
-        setGetLogisticDisabled(false);
-        setGetPreviousClassInfoDisabled(false);
 
         if (!classStudents?.length) {
           alert('未获取到学生列表，请重试或刷新页面');
@@ -164,7 +178,7 @@ const App: FC = () => {
     }
     if (!classStudents.length || !ownerData) return;
 
-    setQueryDisabled(true);
+    setQueryOrderDisabled(true);
 
     const ids = classStudents.map((stu) => String(stu.user_id));
     const hasAccess = await testHasAccess(formData.token, ids[0]);
@@ -183,7 +197,7 @@ const App: FC = () => {
       alert('登录已过期');
     }
 
-    setQueryDisabled(false);
+    setQueryOrderDisabled(false);
   };
 
   const claimOrdersHandler = async (formData: FormData) => {
@@ -209,8 +223,6 @@ const App: FC = () => {
     }
   };
 
-  const exportTable = () => {};
-
   return (
     <div className="App">
       <Grid container spacing={1} alignItems="flex-end">
@@ -218,8 +230,8 @@ const App: FC = () => {
           <QueryForm
             onQueryOrders={queryOrdersHandler}
             onClaimOrders={claimOrdersHandler}
-            queryDisabled={queryDisabled}
-            claimDisabled={claimDisabled}
+            queryOrderDisabled={queryOrderDisabled}
+            claimOrderDisabled={claimOrderDisabled}
             formData={formData}
             setFormData={setFormData}
             ownerClassesData={ownerClassesData}
@@ -259,11 +271,7 @@ const App: FC = () => {
                 !!classInfos.length
               ).map((item) => ({ id: item.id, displayName: item.label }))}
             >
-              <Button
-                variant="contained"
-                onClick={exportTable}
-                sx={{ width: '100%' }}
-              >
+              <Button variant="contained" sx={{ width: '100%' }}>
                 导出表格
               </Button>
             </CsvDownloader>
@@ -273,22 +281,37 @@ const App: FC = () => {
       <Divider sx={{ margin: '10px 0' }} />
 
       <div className="results">
-        <Summary
-          ordersData={ordersData}
-          notClaimedOrders={notClaimedOrders}
-          claimedOrders={claimedOrders}
-          paidOrders={paidOrders}
-          classInfo={formData.classInfo}
-          classStudents={classStudents}
-        />
-        <StuTable
-          data={rows}
-          paidOrderUserIds={paidOrderUserIds}
-          claimedOrderUserIds={claimedOrderUserIds}
-          logisticItems={logisticItems}
-          classInfos={classInfos}
-          setRows={setRows}
-        />
+        {isQueryingStudents ? (
+          <Container
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <CircularProgress />
+          </Container>
+        ) : (
+          <>
+            <Summary
+              ordersData={ordersData}
+              notClaimedOrders={notClaimedOrders}
+              claimedOrders={claimedOrders}
+              paidOrders={paidOrders}
+              classInfo={formData.classInfo}
+              classStudents={classStudents}
+            />
+            <StuTable
+              data={rows}
+              paidOrderUserIds={paidOrderUserIds}
+              claimedOrderUserIds={claimedOrderUserIds}
+              logisticItems={logisticItems}
+              classInfos={classInfos}
+              setRows={setRows}
+            />
+          </>
+        )}
       </div>
     </div>
   );

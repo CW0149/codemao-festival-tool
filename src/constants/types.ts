@@ -187,6 +187,7 @@ export type ClassData = Record<Partial<ClassDataKeys>, any>;
 
 export type StudentBE = Record<Partial<StudentKeys>, any>;
 export type Student = {
+  index: number;
   user_id: number;
   age: number;
   child_name: string;
