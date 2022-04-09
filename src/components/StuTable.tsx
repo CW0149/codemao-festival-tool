@@ -101,16 +101,26 @@ const StuTable: FC<StuTableProps> = ({
 
           if (!logisticItem) return row;
 
-          let isAddressMatch = true;
+          const addressErrInfos = [];
 
-          if (
-            encodePhone(row?.phone_number) !== logisticItem.consignee_phone ||
-            row.province !== logisticItem.consignee_province ||
-            row.city !== logisticItem.consignee_city ||
-            row.district !== logisticItem.consignee_district ||
-            row.address !== logisticItem.consignee_address
-          ) {
-            isAddressMatch = false;
+          if (encodePhone(row?.phone_number) !== logisticItem.consignee_phone) {
+            addressErrInfos.push('号码');
+          }
+
+          if (row.province !== logisticItem.consignee_province) {
+            addressErrInfos.push('省份');
+          }
+
+          if (row.city !== logisticItem.consignee_city) {
+            addressErrInfos.push('城市');
+          }
+
+          if (row.district !== logisticItem.consignee_district) {
+            addressErrInfos.push('地区');
+          }
+
+          if (row.address !== logisticItem.consignee_address) {
+            addressErrInfos.push('详细地址');
           }
 
           return {
@@ -118,9 +128,9 @@ const StuTable: FC<StuTableProps> = ({
             ...logisticItem,
             should_delivery_address: `收货人: ${row.contact_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`,
             address_correct_status: logisticItem.logistics_type
-              ? isAddressMatch
+              ? !addressErrInfos.length
                 ? '是'
-                : '否'
+                : addressErrInfos.join('、') + '不匹配'
               : '-',
           };
         });
@@ -251,7 +261,8 @@ const StuTable: FC<StuTableProps> = ({
                         <span
                           style={{
                             color:
-                              row.address_correct_status === '否'
+                              row.address_correct_status !== '是' &&
+                              row.address_correct_status !== '-'
                                 ? 'red'
                                 : undefined,
                           }}
