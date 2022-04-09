@@ -47,7 +47,8 @@ const QueryForm: FC<QueryFormProps> = ({
     if (!ownerClassesData?.length) return;
 
     const selected = ownerClassesData.find(
-      (classData) => classDataToClassInfo(classData) === formData.classInfo
+      (classData) =>
+        classDataToClassInfo(classData) === formData.classInfo.trim()
     );
 
     modifyFormData(

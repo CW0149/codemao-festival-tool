@@ -70,7 +70,7 @@ export const linesStrToArr = (linesStr: string): string[] => {
 export const classDataToClassInfo = (classData: ClassData) => {
   const { package_name, term_name, class_name } = classData;
 
-  return package_name + term_name + class_name;
+  return (package_name + term_name + class_name).trim();
 };
 
 export type Order = 'asc' | 'desc';
@@ -95,3 +95,15 @@ export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   }
   return 0;
 }
+
+export const formatPhone = (phone: string) => {
+  return phone
+    .replace(/\s/g, '')
+    .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1-$2-$3');
+};
+
+export const encodePhone = (phone: string) => {
+  return phone
+    .replace(/\s/g, '')
+    .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1****$3');
+};

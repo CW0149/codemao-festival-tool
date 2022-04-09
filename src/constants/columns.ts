@@ -68,6 +68,18 @@ export const getColumns = (
             label: '发货时间',
           },
           {
+            id: 'delivery_address',
+            label: '实际发货地址',
+          },
+          {
+            id: 'should_delivery_address',
+            label: '应发货地址',
+          },
+          {
+            id: 'address_correct_status',
+            label: '发货地址是否匹配',
+          },
+          {
             id: 'logisticsType',
             label: '物流方式',
           },
@@ -83,7 +95,7 @@ export const getColumns = (
       : []),
     {
       id: 'consignee_name',
-      label: '收件人姓名',
+      label: '联系姓名',
     },
     {
       id: 'user_id',

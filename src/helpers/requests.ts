@@ -5,6 +5,7 @@ import {
   postCrmData,
   classDataToClassInfo,
   getCrmData,
+  formatPhone,
 } from '.';
 import {
   ClassData,
@@ -83,7 +84,7 @@ const getOrderDataByUser = async (
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
       const data: OrderData = { order: info[i], paid: true };
-      if (info[i].flagid_name === ownerName) {
+      if (info[i].flagid_name.trim() === ownerName.trim()) {
         data.claimed = true;
       }
       return data;
@@ -226,7 +227,7 @@ export const filterOutClassData = (
   if (!classesData) return null;
 
   for (let classData of classesData) {
-    if (classDataToClassInfo(classData) === classInfo) {
+    if (classDataToClassInfo(classData).trim() === classInfo.trim()) {
       return classData;
     }
   }
@@ -289,9 +290,7 @@ export const getStudentsByClass = (classId: number, termId: number) => {
     data.items.map((item: Student) => ({
       ...item,
       consignee_name: item.parent_name || item.child_name,
-      phone_number_formatted: item.phone_number
-        .replace(/\s/g, '')
-        .replace(/(\d{3})(\d{0,4})(\d{0,4})/, '$1-$2-$3'),
+      phone_number_formatted: formatPhone(item.phone_number),
     }))
   );
 };
@@ -301,14 +300,29 @@ export const getLogisticsByPhone = (phone: string) => {
     phone,
   }).then((data) =>
     (data?.data?.items ?? []).map((item: LogisticItem) => ({
-      ...item,
       phone,
+      goodsDesc: item.goodsDesc || '',
+      shippingGoodsDesc: item.shippingGoodsDesc || '',
+      createByName: item.createByName || '',
+      auditStateValue: item.auditStateValue || '',
+      waybillStateValue: item.waybillStateValue || '',
+      logisticsType: item.logisticsType || '',
+      deliveryWaybillNo: item.deliveryWaybillNo || '',
+      logisticsState: item.logisticsState || '',
+      consigneeName: item.consigneeName || '',
+      consigneePhone: item.consigneePhone || '',
+      consigneeProvince: item.province || '',
+      consigneeCity: item.city || '',
+      consigneeDistrict: item.county || '',
+      consigneeAddress: item.streetAddress || '',
+
       createTime: item.createTime
         ? dayjs(item.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
         : '',
       deliveryTime: item.deliveryTime
         ? dayjs(item.deliveryTime * 1000).format('YYYY-MM-DD HH:mm:ss')
         : '',
+      delivery_address: `收货人: ${item.consigneeName} 联系电话: ${item.consigneePhone} 收货地址：${item.province}${item.city}${item.county}${item.streetAddress}`,
     }))
   );
 };

@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import EnhancedTableHead, { HeadCell } from './common/EnhancedTableHead';
-import { getComparator, Order } from '../helpers';
+import { encodePhone, getComparator, Order } from '../helpers';
 import { getColumnMinWidth, getColumns } from '../constants/columns';
 
 export type StudentTableRow = Student & {
@@ -93,10 +93,36 @@ const StuTable: FC<StuTableProps> = ({
         return prevRows.map((row) => {
           if (!phoneToItem[row.phone_number]) return row;
 
+          const shouldDeliveryAddress = `收货人: ${row.consignee_name} 联系电话: ${row.phone_number} 收货地址：${row.province}${row.city}${row.district}${row.address}`;
+          let isAddressMatch = true;
+
+          // console.log(row.consignee_name, row.consigneeName);
+          // console.log(encodePhone(row.phone_number), row.consigneePhone);
+          // console.log(row.province, row.consigneeProvince);
+          // console.log(row.city, row.consigneeCity);
+          // console.log(row.district, row.consigneeDistrict);
+          // console.log(row.address, row.consigneeAddress);
+
+          if (
+            encodePhone(row?.phone_number)?.trim() !==
+              row.consigneePhone?.trim() ||
+            row.province?.trim() !== row.consigneeProvince?.trim() ||
+            row.city?.trim() !== row.consigneeCity?.trim() ||
+            row.district?.trim() !== row.consigneeDistrict?.trim() ||
+            row.address?.trim() !== row.consigneeAddress?.trim()
+          ) {
+            isAddressMatch = false;
+          }
+
           return {
             ...row,
             ...phoneToItem[row.phone_number],
-            consignee_name: row.consigneeName || row.consignee_name,
+            should_delivery_address: shouldDeliveryAddress,
+            address_correct_status: row.logisticsType
+              ? isAddressMatch
+                ? '是'
+                : '否'
+              : '-',
           };
         });
       });
@@ -218,6 +244,20 @@ const StuTable: FC<StuTableProps> = ({
                       <TableCell>{row.auditStateValue}</TableCell>
                       <TableCell>{row.waybillStateValue}</TableCell>
                       <TableCell>{row.deliveryTime}</TableCell>
+                      <TableCell>{row.delivery_address}</TableCell>
+                      <TableCell>{row.should_delivery_address}</TableCell>
+                      <TableCell>
+                        <span
+                          style={{
+                            color:
+                              row.address_correct_status === '否'
+                                ? 'red'
+                                : undefined,
+                          }}
+                        >
+                          {row.address_correct_status}
+                        </span>
+                      </TableCell>
                       <TableCell>{row.logisticsType}</TableCell>
                       <TableCell>{row.deliveryWaybillNo}</TableCell>
                       <TableCell>{row.logisticsState}</TableCell>
