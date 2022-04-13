@@ -34,7 +34,6 @@ import {
   Container,
   Divider,
   Grid,
-  Skeleton,
 } from '@mui/material';
 import { getColumns } from './constants/columns';
 

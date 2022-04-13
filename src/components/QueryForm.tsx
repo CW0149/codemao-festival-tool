@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles';
 import {
-  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -8,6 +7,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { FC, useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
 import { ClassData, FormData, FormDataKey } from '../constants/types';
@@ -87,7 +87,7 @@ const QueryForm: FC<QueryFormProps> = ({
     }
   };
 
-  const clickHandler = () => {
+  const claimHandler = () => {
     if (testValidData()) {
       onClaimOrders(formData);
     }
@@ -158,15 +158,15 @@ const QueryForm: FC<QueryFormProps> = ({
               />
             </Grid>
             <Grid item md={12} xs={6}>
-              <Button
+              <LoadingButton
                 id="logistic_btn"
                 fullWidth
                 variant="contained"
-                disabled={getLogisticDisabled}
+                loading={getLogisticDisabled}
                 onClick={onQueryLogistics}
               >
                 获取物流信息
-              </Button>
+              </LoadingButton>
             </Grid>
           </Grid>
         </StyledBox>
@@ -185,15 +185,15 @@ const QueryForm: FC<QueryFormProps> = ({
               />
             </Grid>
             <Grid item md={12} xs={6}>
-              <Button
+              <LoadingButton
                 id="logistic_btn"
                 fullWidth
                 variant="contained"
-                disabled={getPreviousClassInfoDisabled}
+                loading={getPreviousClassInfoDisabled}
                 onClick={onQueryPreviousClassInfo}
               >
                 获取原班主任信息
-              </Button>
+              </LoadingButton>
             </Grid>
           </Grid>
         </StyledBox>
@@ -216,10 +216,10 @@ const QueryForm: FC<QueryFormProps> = ({
             <Grid item md={12} xs={6}>
               <Grid container spacing={1}>
                 <Grid item md={6} xs={6}>
-                  <Button
+                  <LoadingButton
                     variant="contained"
                     fullWidth
-                    disabled={queryOrderDisabled}
+                    loading={queryOrderDisabled}
                     onClick={queryHandler}
                     style={{ marginRight: '10px' }}
                   >
@@ -233,14 +233,14 @@ const QueryForm: FC<QueryFormProps> = ({
                     >
                       查询已购买{'|'}已领单
                     </span>
-                  </Button>
+                  </LoadingButton>
                 </Grid>
                 <Grid item md={6} xs={6}>
-                  <Button
+                  <LoadingButton
                     variant="contained"
                     fullWidth
                     disabled={claimOrderDisabled}
-                    onClick={clickHandler}
+                    onClick={claimHandler}
                     color="error"
                   >
                     <span
@@ -253,7 +253,7 @@ const QueryForm: FC<QueryFormProps> = ({
                     >
                       点我自动领单
                     </span>
-                  </Button>
+                  </LoadingButton>
                 </Grid>
               </Grid>
             </Grid>
