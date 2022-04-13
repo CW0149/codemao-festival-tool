@@ -1,7 +1,6 @@
 import { styled } from '@mui/material/styles';
 import {
   Button,
-  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -104,7 +103,7 @@ const QueryForm: FC<QueryFormProps> = ({
   return (
     <Grid container spacing={1}>
       <Grid item md={12} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
+        <StyledBox>
           <Grid container spacing={1}>
             <Grid item md={6} xs={6}>
               <TextField
@@ -142,10 +141,10 @@ const QueryForm: FC<QueryFormProps> = ({
               </FormControl>
             </Grid>
           </Grid>
-        </Box>
+        </StyledBox>
       </Grid>
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
+        <StyledBox>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -170,11 +169,11 @@ const QueryForm: FC<QueryFormProps> = ({
               </Button>
             </Grid>
           </Grid>
-        </Box>
+        </StyledBox>
       </Grid>
 
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
+        <StyledBox>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -197,11 +196,11 @@ const QueryForm: FC<QueryFormProps> = ({
               </Button>
             </Grid>
           </Grid>
-        </Box>
+        </StyledBox>
       </Grid>
 
       <Grid item md={4} xs={12}>
-        <Box sx={{ p: 1, pt: 2, background: '#fff', borderRadius: '4px' }}>
+        <StyledBox>
           <Grid container spacing={1}>
             <Grid item md={12} xs={6}>
               <TextField
@@ -259,9 +258,17 @@ const QueryForm: FC<QueryFormProps> = ({
               </Grid>
             </Grid>
           </Grid>
-        </Box>
+        </StyledBox>
       </Grid>
     </Grid>
   );
 };
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(1),
+  paddingTop: theme.spacing(2),
+  background: '#fff',
+  borderRadius: '4px',
+}));
+
 export default QueryForm;
