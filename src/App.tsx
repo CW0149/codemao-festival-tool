@@ -302,7 +302,9 @@ const App: FC = () => {
               classStudents={classStudents}
             />
             <StuTable
+              teacherName={ownerData?.name}
               data={rows}
+              paidOrders={paidOrders}
               paidOrderUserIds={paidOrderUserIds}
               claimedOrderUserIds={claimedOrderUserIds}
               logisticItems={logisticItems}

@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { ClassInfo, LogisticItem, Student } from '../constants/types';
+import { ClassInfo, LogisticItem, Order, Student } from '../constants/types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import EnhancedTableHead, { HeadCell } from './common/EnhancedTableHead';
-import { encodePhone, getComparator, Order } from '../helpers';
+import { encodePhone, getComparator, Order as ColumnOrder } from '../helpers';
 import { getColumnMinWidth, getColumns } from '../constants/columns';
 
 export type StudentTableRow = Student & {
@@ -21,25 +21,30 @@ export type StudentTableRow = Student & {
   phone_number_formatted?: string;
   [key: string]: any;
 } & Partial<LogisticItem> &
-  Partial<ClassInfo>;
+  Partial<ClassInfo> &
+  Partial<Order>;
 
 type StuTableProps = {
   data: StudentTableRow[];
+  paidOrders: Order[];
   paidOrderUserIds: string[];
   claimedOrderUserIds: string[];
   logisticItems: (LogisticItem | undefined)[];
   classInfos: (ClassInfo | undefined)[];
   setRows: (callback: (prevRows: any[]) => any) => void;
+  teacherName?: string;
 };
 const StuTable: FC<StuTableProps> = ({
   data = [],
+  paidOrders = [],
   paidOrderUserIds,
   claimedOrderUserIds,
   logisticItems,
   classInfos,
   setRows,
+  teacherName,
 }) => {
-  const [order, setOrder] = useState<Order>('asc');
+  const [order, setOrder] = useState<ColumnOrder>('asc');
   const [orderBy, setOrderBy] = useState<string>('');
 
   /**
@@ -162,6 +167,29 @@ const StuTable: FC<StuTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classInfos]);
 
+  useEffect(() => {
+    if (paidOrders.length) {
+      const userIdToItem = paidOrders.reduce((res: any, item) => {
+        if (!item) return res;
+
+        res[item.user_id] = item;
+        return res;
+      }, {});
+
+      setRows((prevRows) => {
+        return prevRows.map((row) => {
+          if (!userIdToItem[row.user_id]) return row;
+
+          return {
+            ...row,
+            ...userIdToItem[row.user_id],
+          };
+        });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paidOrders]);
+
   if (!data.length) return null;
 
   const hasPaidOrders = paidOrderUserIds.length > 0;
@@ -236,28 +264,46 @@ const StuTable: FC<StuTableProps> = ({
                   </TableCell>
                   <TableCell>{row.child_name}</TableCell>
                   {hasPaidOrders && (
-                    <TableCell>
-                      <span
-                        style={{
-                          color: row.paid !== row.claimed ? 'red' : undefined,
-                        }}
-                      >
-                        {row.paid}
-                      </span>
-                    </TableCell>
+                    <>
+                      <TableCell>{row.work_name}</TableCell>
+                      <TableCell>
+                        <span
+                          style={{
+                            color: row.paid !== row.claimed ? 'red' : undefined,
+                          }}
+                        >
+                          {row.paid}
+                        </span>
+                      </TableCell>
+                    </>
                   )}
                   {hasClaimedOrders && (
-                    <TableCell>
-                      <span
-                        style={{
-                          color: row.paid !== row.claimed ? 'red' : undefined,
-                        }}
-                      >
-                        {row.claimed}
-                      </span>
-                    </TableCell>
+                    <>
+                      <TableCell>
+                        <span
+                          style={{
+                            color: row.paid !== row.claimed ? 'red' : undefined,
+                          }}
+                        >
+                          {row.claimed}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          style={{
+                            color:
+                              row.flagid_name !== teacherName
+                                ? 'red'
+                                : undefined,
+                          }}
+                        >
+                          {row.flagid_name}
+                        </span>
+                      </TableCell>
+                    </>
                   )}
                   <TableCell>{row.age}</TableCell>
+                  <TableCell>{row.phone_number_formatted}</TableCell>
 
                   {!!logisticItems.length && (
                     <>
@@ -291,7 +337,6 @@ const StuTable: FC<StuTableProps> = ({
                   <TableCell>{row.contact_name}</TableCell>
                   <TableCell>{row.user_id}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
-                  <TableCell>{row.phone_number_formatted}</TableCell>
 
                   <TableCell align="center">{row.province}</TableCell>
                   <TableCell align="center">{row.city}</TableCell>

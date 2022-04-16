@@ -20,6 +20,10 @@ export const getColumns = (
     ...(hasPaidOrders
       ? [
           {
+            id: 'work_name',
+            label: '项目链接名称',
+          },
+          {
             id: 'paid',
             label: '已购买',
           },
@@ -29,13 +33,18 @@ export const getColumns = (
       ? [
           {
             id: 'claimed',
-            label: '我已领单',
+            label: '已领单',
           },
+          { id: 'flagid_name', label: '领单人' },
         ]
       : []),
     {
       id: 'age',
       label: '年龄',
+    },
+    {
+      id: 'phone_number_formatted',
+      label: '格式化电话',
     },
     ...(hasLogisticItems
       ? [
@@ -104,10 +113,6 @@ export const getColumns = (
     {
       id: 'phone_number',
       label: '用户电话',
-    },
-    {
-      id: 'phone_number_formatted',
-      label: '格式化电话',
     },
     {
       id: 'province',

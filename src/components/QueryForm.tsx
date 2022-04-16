@@ -210,7 +210,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 id="work_name"
                 value={formData.workName}
                 onChange={(e) => modifyFormData('workName', e.target.value)}
-                placeholder="支持模糊匹配，eg.【高阶】机器人高阶课-6期"
+                placeholder="支持模糊匹配，eg. 机器人高阶课"
               />
             </Grid>
             <Grid item md={12} xs={6}>

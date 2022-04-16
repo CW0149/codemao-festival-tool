@@ -87,7 +87,7 @@ const getOrderDataByUser = async (
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
       const data: OrderData = { order: info[i], paid: true };
-      if (info[i].flagid_name === ownerName) {
+      if (!!info[i].flagid_name) {
         data.claimed = true;
       }
       return data;

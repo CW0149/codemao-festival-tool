@@ -1,6 +1,6 @@
 export const formData = {
   token: process.env.REACT_APP_FESTIVAL_TOKEN,
-  workName: '【高阶】机器人高阶课-6期',
+  workName: '机器人高阶课',
   classInfo: '编程猫机器人系统课8期A2',
   ownerEmail: 'yanluxia@codemao.cn',
   shippingGoodsDesc: 'SU003670 编程猫机器人创造家V1.0礼盒 1',
