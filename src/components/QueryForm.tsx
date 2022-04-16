@@ -1,5 +1,7 @@
 import { styled } from '@mui/material/styles';
 import {
+  Autocomplete,
+  Checkbox,
   FormControl,
   Grid,
   InputLabel,
@@ -10,9 +12,13 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import { FC, useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { ClassData, FormData, FormDataKey } from '../constants/types';
+import { ClassData, FormData, FormDataKey, Student } from '../constants/types';
 import { classDataToClassInfo } from '../helpers';
 import { Box } from '@mui/system';
+import { CheckBoxOutlineBlank, CheckBox } from '@mui/icons-material';
+
+const icon = <CheckBoxOutlineBlank fontSize="small" />;
+const checkedIcon = <CheckBox fontSize="small" />;
 
 type QueryFormProps = {
   onQueryOrders: (formData: FormData) => void;
@@ -26,6 +32,10 @@ type QueryFormProps = {
   getPreviousClassInfoDisabled: boolean;
   formData: FormData;
   ownerClassesData?: ClassData[];
+  classStudents: Student[];
+  selectedStudents: Student[];
+  setSelectedStudents: (newData: Student[]) => void;
+  isQueryingStudents: boolean;
 };
 const QueryForm: FC<QueryFormProps> = ({
   onQueryOrders,
@@ -39,6 +49,10 @@ const QueryForm: FC<QueryFormProps> = ({
   setFormData,
   formData,
   ownerClassesData,
+  classStudents,
+  selectedStudents,
+  setSelectedStudents,
+  isQueryingStudents,
 }) => {
   const [email, setEmail] = useState(formData.ownerEmail);
 
@@ -104,8 +118,8 @@ const QueryForm: FC<QueryFormProps> = ({
     <Grid container spacing={1}>
       <Grid item md={12} xs={12}>
         <StyledBox>
-          <Grid container spacing={1}>
-            <Grid item md={6} xs={6}>
+          <Grid container spacing={1} rowSpacing={2}>
+            <Grid item md={4} xs={12}>
               <TextField
                 size="small"
                 fullWidth
@@ -120,7 +134,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 placeholder="可选，若归属人有重名必填"
               />
             </Grid>
-            <Grid item md={6} xs={6}>
+            <Grid item md={4} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>班级</InputLabel>
                 <Select
@@ -139,6 +153,40 @@ const QueryForm: FC<QueryFormProps> = ({
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Autocomplete
+                disabled={isQueryingStudents}
+                multiple
+                disableCloseOnSelect
+                limitTags={1}
+                size="small"
+                value={selectedStudents}
+                options={classStudents}
+                renderOption={(props, option, { selected }) => (
+                  <li key={option.user_id} {...props}>
+                    <Checkbox
+                      icon={icon}
+                      checkedIcon={checkedIcon}
+                      style={{ marginRight: 8 }}
+                      checked={selected}
+                    />
+                    {`${option.child_name} [${option.nickname}]`}
+                  </li>
+                )}
+                getOptionLabel={(option) =>
+                  `${option.child_name} [${option.nickname}]`
+                }
+                renderInput={(params) => <TextField {...params} label="学生" />}
+                onChange={(e, newValue) => {
+                  setSelectedStudents(newValue);
+                }}
+                onBlur={() => {
+                  if (!selectedStudents.length) {
+                    setSelectedStudents(classStudents);
+                  }
+                }}
+              />
             </Grid>
           </Grid>
         </StyledBox>

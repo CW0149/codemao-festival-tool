@@ -7,6 +7,7 @@ type SummaryProps = {
   paidOrders: Order[];
   claimedOrders: Order[];
   classInfo: string;
+  selectedStudents: Student[];
   classStudents: Student[];
 };
 const Summary: FC<SummaryProps> = ({
@@ -15,11 +16,12 @@ const Summary: FC<SummaryProps> = ({
   paidOrders = [],
   claimedOrders = [],
   classInfo = '',
+  selectedStudents = [],
   classStudents = [],
 }) => {
   return (
     <div style={{ marginBottom: '10px' }}>
-      {classInfo}[总:{classStudents.length}人]
+      {classInfo}[总:{classStudents.length}人/选中:{selectedStudents.length}人]
       {notClaimedOrders.length ? (
         <div>
           <strong>未被认领用户信息：</strong>

@@ -49,6 +49,7 @@ const App: FC = () => {
   const [ownerData, setOwnerData] = useState<OwnerData>();
   const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
   const [classStudents, setClassStudents] = useState<Student[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [logisticItems, setLogisticItems] = useState<
     (LogisticItem | undefined)[]
   >([]);
@@ -96,10 +97,14 @@ const App: FC = () => {
   const [rows, setRows] = useState<StudentTableRow[]>([]);
 
   useEffect(() => {
-    if (classStudents) {
-      setRows(classStudents);
-    }
+    setSelectedStudents(classStudents);
   }, [classStudents]);
+
+  useEffect(() => {
+    if (selectedStudents) {
+      setRows(selectedStudents);
+    }
+  }, [selectedStudents]);
 
   useEffect(() => {
     getClassesDataByEmail();
@@ -179,7 +184,7 @@ const App: FC = () => {
 
     setQueryOrderDisabled(true);
 
-    const ids = classStudents.map((stu) => String(stu.user_id));
+    const ids = selectedStudents.map((stu) => String(stu.user_id));
     const hasAccess = await testHasAccess(formData.token, ids[0]);
 
     if (hasAccess) {
@@ -227,6 +232,7 @@ const App: FC = () => {
       <Grid container spacing={1} alignItems="flex-end">
         <Grid item md={10} xs={12}>
           <QueryForm
+            isQueryingStudents={isQueryingStudents}
             onQueryOrders={queryOrdersHandler}
             onClaimOrders={claimOrdersHandler}
             queryOrderDisabled={queryOrderDisabled}
@@ -240,7 +246,7 @@ const App: FC = () => {
               setGetLogisticDisabled(true);
 
               const items = await getMatchedLogicsByPhones(
-                classStudents.map((stu) => stu.phone_number),
+                selectedStudents.map((stu) => stu.phone_number),
                 formData.shippingGoodsDesc
               );
               setLogisticItems(items);
@@ -250,12 +256,15 @@ const App: FC = () => {
               setGetPreviousClassInfoDisabled(true);
 
               const items = await getMatchedClassInfosByPackageNames(
-                classStudents.map((stu) => stu.user_id),
+                selectedStudents.map((stu) => stu.user_id),
                 formData.packageName
               );
               setClassInfos(items);
               setGetPreviousClassInfoDisabled(false);
             }}
+            classStudents={classStudents}
+            selectedStudents={selectedStudents}
+            setSelectedStudents={setSelectedStudents}
           />
         </Grid>
         <Grid item md={2} xs={12}>
@@ -300,6 +309,7 @@ const App: FC = () => {
               paidOrders={paidOrders}
               classInfo={formData.classInfo}
               classStudents={classStudents}
+              selectedStudents={selectedStudents}
             />
             <StuTable
               teacherName={ownerData?.name}
