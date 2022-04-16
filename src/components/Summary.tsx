@@ -21,7 +21,7 @@ const Summary: FC<SummaryProps> = ({
 }) => {
   return (
     <div style={{ marginBottom: '10px' }}>
-      {classInfo}[总:{classStudents.length}人/选中:{selectedStudents.length}人]
+      {classInfo}({classStudents.length}人) [选中:{selectedStudents.length}人]
       {notClaimedOrders.length ? (
         <div>
           <strong>未被认领用户信息：</strong>

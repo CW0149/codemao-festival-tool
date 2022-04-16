@@ -136,6 +136,11 @@ const App: FC = () => {
     }
   }, [isQueryingStudents]);
 
+  useEffect(() => {
+    setOrdersData([]);
+    setLogisticItems([]);
+  }, [selectedStudents]);
+
   const getClassesDataByEmail = async () => {
     try {
       if (!formData.token) throw Error('请设置token');
@@ -243,6 +248,11 @@ const App: FC = () => {
             getLogisticDisabled={getLogisticDisabled}
             getPreviousClassInfoDisabled={getPreviousClassInfoDisabled}
             onQueryLogistics={async () => {
+              if (!formData.shippingGoodsDesc) {
+                alert('请输入内部物料名');
+                return;
+              }
+
               setGetLogisticDisabled(true);
 
               const items = await getMatchedLogicsByPhones(
@@ -253,6 +263,11 @@ const App: FC = () => {
               setGetLogisticDisabled(false);
             }}
             onQueryPreviousClassInfo={async () => {
+              if (!formData.packageName) {
+                alert('请输入学生来自的课程');
+                return;
+              }
+
               setGetPreviousClassInfoDisabled(true);
 
               const items = await getMatchedClassInfosByPackageNames(

@@ -54,7 +54,12 @@ const QueryForm: FC<QueryFormProps> = ({
   setSelectedStudents,
   isQueryingStudents,
 }) => {
+  const [tempStudents, setTempStudents] = useState(selectedStudents);
   const [email, setEmail] = useState(formData.ownerEmail);
+
+  useEffect(() => {
+    setTempStudents(selectedStudents);
+  }, [selectedStudents]);
 
   useEffect(() => {
     if (!ownerClassesData?.length) return;
@@ -161,7 +166,7 @@ const QueryForm: FC<QueryFormProps> = ({
                 disableCloseOnSelect
                 limitTags={1}
                 size="small"
-                value={selectedStudents}
+                value={tempStudents}
                 options={classStudents}
                 renderOption={(props, option, { selected }) => (
                   <li key={option.user_id} {...props}>
@@ -179,10 +184,13 @@ const QueryForm: FC<QueryFormProps> = ({
                 }
                 renderInput={(params) => <TextField {...params} label="学生" />}
                 onChange={(e, newValue) => {
-                  setSelectedStudents(newValue);
+                  setTempStudents(newValue);
+                }}
+                onClose={() => {
+                  setSelectedStudents(tempStudents);
                 }}
                 onBlur={() => {
-                  if (!selectedStudents.length) {
+                  if (!tempStudents.length) {
                     setSelectedStudents(classStudents);
                   }
                 }}
