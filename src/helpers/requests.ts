@@ -26,7 +26,7 @@ import {
  * ownerName: string // 归属人
  */
 
-const queryOrder = (token: string, userId: string) => {
+const queryOrder = (token: string, phone: string) => {
   return postFestivalData(
     token,
     'https://festival.codemao.cn/yyb2019/index/checkAddOrder',
@@ -42,10 +42,10 @@ const queryOrder = (token: string, userId: string) => {
       toend: '',
       toflag: 'all',
       username: '',
-      tel: '',
+      tel: phone,
       type: 2,
       paytit: '',
-      user_id: userId,
+      user_id: '',
       login_name: '',
       term_name: '',
       teacher_name: '',
@@ -70,13 +70,13 @@ const queryOrder = (token: string, userId: string) => {
 
 const getOrderDataByUser = async (
   token: string,
-  userId: string,
+  phone: string,
   workName: string,
   ownerName: string
 ): Promise<OrderData> => {
-  if (!token || !userId) return null;
+  if (!token || !phone) return null;
 
-  const res = await queryOrder(token, userId);
+  const res = await queryOrder(token, phone);
   if (res.res === 'error') {
     throw res.code;
   }
@@ -86,7 +86,10 @@ const getOrderDataByUser = async (
 
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
-      const data: OrderData = { order: info[i], paid: true };
+      const data: OrderData = {
+        order: { ...info[i], phone_number: phone },
+        paid: true,
+      };
       if (!!info[i].flagid_name) {
         data.claimed = true;
       }
@@ -237,9 +240,9 @@ export const filterOutClassData = (
   return null;
 };
 
-export const testHasAccess = async (token: string, userId: string) => {
+export const testHasAccess = async (token: string, phone: string) => {
   try {
-    await getOrderDataByUser(token, userId, '', '');
+    await getOrderDataByUser(token, phone, '', '');
     return true;
   } catch (errCode) {
     if (errCode === 50008) {
@@ -251,14 +254,16 @@ export const testHasAccess = async (token: string, userId: string) => {
 
 export const getOrdersData = (
   token: string,
-  toCheckIds: string[],
+  toCheckPhones: string[],
   workName: string,
   ownerName: string
 ) => {
-  if (!toCheckIds.length) return [];
+  if (!toCheckPhones.length) return [];
 
   return Promise.all(
-    toCheckIds.map((id) => getOrderDataByUser(token, id, workName, ownerName))
+    toCheckPhones.map((phone) =>
+      getOrderDataByUser(token, phone, workName, ownerName)
+    )
   );
 };
 

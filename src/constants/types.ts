@@ -177,7 +177,7 @@ export type OwnerData = {
   flag: number;
   [key: string]: number | string | null;
 };
-export type Order = Record<Partial<OrderKeys>, any>;
+export type Order = Record<Partial<OrderKeys | 'phone_number'>, any>;
 export type ValidOrderData = {
   order: Order;
   paid?: boolean;

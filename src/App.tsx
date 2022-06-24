@@ -63,31 +63,28 @@ const App: FC = () => {
     () => paidOrdersData.map((data) => data.order),
     [paidOrdersData]
   );
-  const paidOrderUserIds = useMemo(
-    () => paidOrders.map((order) => order.user_id),
-    [paidOrders]
-  );
 
   const claimedOrders: Order[] = useMemo(
     () =>
       paidOrdersData.filter((data) => data.claimed).map((data) => data.order),
     [paidOrdersData]
   );
-  const claimedOrderUserIds = useMemo(
-    () => claimedOrders.map((order) => order.user_id),
+
+  const claimedOrderUserPhones = useMemo(
+    () => claimedOrders.map((order) => order.phone_number),
     [claimedOrders]
   );
   const notClaimedOrders: Order[] = useMemo(() => {
     const orders = [];
-    const claimedIdSet = new Set(claimedOrderUserIds);
+    const claimedPhonesSet = new Set(claimedOrderUserPhones);
 
     for (let paid of paidOrders) {
-      if (!claimedIdSet.has(paid.user_id)) {
+      if (!claimedPhonesSet.has(paid.phone_number)) {
         orders.push(paid);
       }
     }
     return orders;
-  }, [claimedOrderUserIds, paidOrders]);
+  }, [claimedOrderUserPhones, paidOrders]);
 
   const claimOrderDisabled = useMemo(
     () => !notClaimedOrders.length,
@@ -189,15 +186,15 @@ const App: FC = () => {
 
     setQueryOrderDisabled(true);
 
-    const ids = selectedStudents.map((stu) => String(stu.user_id));
-    const hasAccess = await testHasAccess(formData.token, ids[0]);
+    const phones = selectedStudents.map((stu) => String(stu.phone_number));
+    const hasAccess = await testHasAccess(formData.token, phones[0]);
 
     if (hasAccess) {
       setOrdersData([]);
 
       const ordersData = await getOrdersData(
         formData.token,
-        ids,
+        phones,
         formData.workName,
         ownerData.name
       );
@@ -330,8 +327,7 @@ const App: FC = () => {
               teacherName={ownerData?.name}
               data={rows}
               paidOrders={paidOrders}
-              paidOrderUserIds={paidOrderUserIds}
-              claimedOrderUserIds={claimedOrderUserIds}
+              claimedOrders={claimedOrders}
               logisticItems={logisticItems}
               classInfos={classInfos}
               setRows={setRows}

@@ -187,9 +187,11 @@ const QueryForm: FC<QueryFormProps> = ({
                   setTempStudents(newValue);
                 }}
                 onClose={() => {
+                  console.log('onclose');
                   setSelectedStudents(tempStudents);
                 }}
                 onBlur={() => {
+                  console.log('onBlur');
                   if (!tempStudents.length) {
                     setSelectedStudents(classStudents);
                   }

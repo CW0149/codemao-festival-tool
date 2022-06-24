@@ -27,8 +27,7 @@ export type StudentTableRow = Student & {
 type StuTableProps = {
   data: StudentTableRow[];
   paidOrders: Order[];
-  paidOrderUserIds: string[];
-  claimedOrderUserIds: string[];
+  claimedOrders: Order[];
   logisticItems: (LogisticItem | undefined)[];
   classInfos: (ClassInfo | undefined)[];
   setRows: (callback: (prevRows: any[]) => any) => void;
@@ -37,8 +36,7 @@ type StuTableProps = {
 const StuTable: FC<StuTableProps> = ({
   data = [],
   paidOrders = [],
-  paidOrderUserIds,
-  claimedOrderUserIds,
+  claimedOrders = [],
   logisticItems,
   classInfos,
   setRows,
@@ -51,31 +49,53 @@ const StuTable: FC<StuTableProps> = ({
    * Set's value will update every time this compo renders
    * Use useMemo to prevent that
    * */
-  const paidUserIdsSet = useMemo(
-    () => new Set(paidOrderUserIds.map((id) => String(id))),
-    [paidOrderUserIds]
+  const paidUserPhoneToOrder: Record<string, Order> = useMemo(
+    () =>
+      paidOrders.reduce(
+        (res, item) => ({ ...res, [item.phone_number]: item }),
+        {}
+      ),
+    [paidOrders]
   );
-  const claimedUserIdsSet = useMemo(
-    () => new Set(claimedOrderUserIds.map((id) => String(id))),
-    [claimedOrderUserIds]
+  const claimedUserPhoneToOrder: Record<string, Order> = useMemo(
+    () =>
+      claimedOrders.reduce(
+        (res, item) => ({ ...res, [item.phone_number]: item }),
+        {}
+      ),
+    [claimedOrders]
   );
 
   useEffect(() => {
-    if (paidOrderUserIds.length) {
+    if (Object.keys(paidUserPhoneToOrder).length) {
       setRows((prevRows) =>
         prevRows.map((row) => {
-          const value = paidUserIdsSet.has(String(row.user_id)) ? '是' : '-';
+          const order = paidUserPhoneToOrder[row.phone_number];
+          let value = !!order ? '是' : '-';
+          if (order) {
+            if (String(order.user_id) !== String(row.user_id)) {
+              value = `是 购买ID:${order.user_id}`;
+            } else {
+              value = '是';
+            }
+          } else {
+            value = '-';
+          }
+
           return {
             ...row,
             paid: value,
+            flagid_name: paidUserPhoneToOrder[row.phone_number]?.flagid_name,
           };
         })
       );
     }
-    if (claimedOrderUserIds.length) {
+    if (Object.keys(claimedUserPhoneToOrder).length) {
       setRows((prevRows) =>
         prevRows.map((row) => {
-          const value = claimedUserIdsSet.has(String(row.user_id)) ? '是' : '-';
+          const value = !!claimedUserPhoneToOrder[row.phone_number]
+            ? '是'
+            : '-';
           return {
             ...row,
             claimed: value,
@@ -84,12 +104,7 @@ const StuTable: FC<StuTableProps> = ({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    paidOrderUserIds,
-    claimedOrderUserIds,
-    paidUserIdsSet,
-    claimedUserIdsSet,
-  ]);
+  }, [paidUserPhoneToOrder, claimedUserPhoneToOrder]);
 
   useEffect(() => {
     if (logisticItems.length) {
@@ -192,8 +207,8 @@ const StuTable: FC<StuTableProps> = ({
 
   if (!data.length) return null;
 
-  const hasPaidOrders = paidOrderUserIds.length > 0;
-  const hasClaimedOrders = claimedOrderUserIds.length > 0;
+  const hasPaidOrders = paidOrders.length > 0;
+  const hasClaimedOrders = claimedOrders.length > 0;
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -218,8 +233,8 @@ const StuTable: FC<StuTableProps> = ({
             order={order}
             orderBy={orderBy}
             headCells={getColumns(
-              !!paidOrderUserIds.length,
-              !!claimedOrderUserIds.length,
+              hasPaidOrders,
+              hasClaimedOrders,
               !!logisticItems.length,
               !!classInfos.length
             ).map(
