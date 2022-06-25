@@ -141,13 +141,6 @@ const claimOrder = (
   );
 };
 
-const getLoginFlagid = (token: string): Promise<number | null> => {
-  return getFestivalData(
-    token,
-    'https://festival.codemao.cn/yyb2019/index/info'
-  ).then((res) => res?.info?.id ?? null);
-};
-
 /**
  * 
  * @param token 
