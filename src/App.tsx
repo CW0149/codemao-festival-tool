@@ -11,6 +11,7 @@ import {
   LogisticItem,
   Order,
   OrderData,
+  OrderQuery,
   OwnerData,
   Student,
   ValidOrderData,
@@ -22,6 +23,7 @@ import {
   getMatchedClassInfosByPackageNames,
   getMatchedLogicsByPhones,
   getOrdersData,
+  getOrdersDataClaimedBySystem,
   getOwnerByEmail,
   getStudentsByClass,
   testHasAccess,
@@ -70,21 +72,25 @@ const App: FC = () => {
     [paidOrdersData]
   );
 
-  const claimedOrderUserPhones = useMemo(
-    () => claimedOrders.map((order) => order.phone_number),
+  const claimedOrderSignatures = useMemo(
+    () =>
+      claimedOrders.map((order) => `${order.phone_number};${order.user_id}`),
     [claimedOrders]
   );
   const notClaimedOrders: Order[] = useMemo(() => {
     const orders = [];
-    const claimedPhonesSet = new Set(claimedOrderUserPhones);
 
     for (let paid of paidOrders) {
-      if (!claimedPhonesSet.has(paid.phone_number)) {
+      if (
+        !claimedOrderSignatures.find(
+          (str) => str.includes(paid.phone_number) || str.includes(paid.user_id)
+        )
+      ) {
         orders.push(paid);
       }
     }
     return orders;
-  }, [claimedOrderUserPhones, paidOrders]);
+  }, [claimedOrderSignatures, paidOrders]);
 
   const claimOrderDisabled = useMemo(
     () => !notClaimedOrders.length,
@@ -138,6 +144,11 @@ const App: FC = () => {
     setLogisticItems([]);
   }, [selectedStudents]);
 
+  const classData = useMemo(
+    () => filterOutClassData(formData.classInfo, ownerClassesData),
+    [formData.classInfo, ownerClassesData]
+  );
+
   const getClassesDataByEmail = async () => {
     try {
       if (!formData.token) throw Error('请设置token');
@@ -158,9 +169,6 @@ const App: FC = () => {
   };
 
   const getStudentsByClassInfo = () => {
-    if (!ownerClassesData?.length) return;
-
-    const classData = filterOutClassData(formData.classInfo, ownerClassesData);
     if (!classData) return;
 
     setIsQueryingStudents(true);
@@ -177,7 +185,10 @@ const App: FC = () => {
     );
   };
 
-  const queryOrdersHandler = async (formData: FormData) => {
+  const queryOrdersHandler = async (
+    formData: FormData,
+    isQuerySystemClaimed?: boolean
+  ) => {
     if (!formData.token) {
       console.log('请设置token');
       return;
@@ -186,18 +197,31 @@ const App: FC = () => {
 
     setQueryOrderDisabled(true);
 
-    const phones = selectedStudents.map((stu) => String(stu.phone_number));
-    const hasAccess = await testHasAccess(formData.token, phones[0]);
+    const queries = selectedStudents.map(
+      (stu): OrderQuery => ({
+        userId: String(stu.user_id),
+      })
+    );
+    const hasAccess = await testHasAccess(formData.token, queries[0]);
 
     if (hasAccess) {
       setOrdersData([]);
 
-      const ordersData = await getOrdersData(
-        formData.token,
-        phones,
-        formData.workName,
-        ownerData.name
-      );
+      let ordersData = [];
+      if (isQuerySystemClaimed) {
+        ordersData = await getOrdersDataClaimedBySystem(
+          formData.token,
+          formData.classInfo
+        );
+      } else {
+        ordersData = await getOrdersData(
+          formData.token,
+          queries,
+          formData.workName,
+          formData.classInfo
+        );
+      }
+
       setOrdersData(ordersData);
     } else {
       alert('登录已过期');
@@ -224,7 +248,7 @@ const App: FC = () => {
         formData.classInfo,
         ownerData
       );
-      await queryOrdersHandler(formData);
+      await queryOrdersHandler(formData, false);
       alert('已重新获取数据，也可以去系统查看验证');
     }
   };

@@ -10,7 +10,7 @@ const PROD_TOOL_URL = 'http://42.194.164.225/codemao-resitival-tool/';
 const TEST_TOOL_URL = 'http://localhost:3000';
 const TOOL_URL = PROD_TOOL_URL;
 
-openToolBtn.addEventListener('click', async () => {
+const openToolHandler = async () => {
   const loggedInInfo = await getLoggedInInfo();
   const { loggedIn, token, teacherEmail } = loggedInInfo;
 
@@ -47,7 +47,9 @@ openToolBtn.addEventListener('click', async () => {
 
     chrome.tabs.update(selectedCodemaoTab.id, { active: true });
   }
-});
+};
+
+openToolBtn.addEventListener('click', openToolHandler);
 
 const openCodemaoToolTab = async (token, teacherEmail) => {
   const searchParams = new URLSearchParams({

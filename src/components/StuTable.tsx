@@ -49,28 +49,39 @@ const StuTable: FC<StuTableProps> = ({
    * Set's value will update every time this compo renders
    * Use useMemo to prevent that
    * */
-  const paidUserPhoneToOrder: Record<string, Order> = useMemo(
+  const paidUserPhoneOrUseridToOrder: Record<string, Order> = useMemo(
     () =>
       paidOrders.reduce(
-        (res, item) => ({ ...res, [item.phone_number]: item }),
+        (res, item) => ({
+          ...res,
+          [item.phone_number]: item,
+          [item.user_id]: item,
+        }),
         {}
       ),
     [paidOrders]
   );
-  const claimedUserPhoneToOrder: Record<string, Order> = useMemo(
+  const claimedUserPhoneOrUseridToOrder: Record<string, Order> = useMemo(
     () =>
       claimedOrders.reduce(
-        (res, item) => ({ ...res, [item.phone_number]: item }),
+        (res, item) => ({
+          ...res,
+          [item.phone_number]: item,
+          [item.user_id]: item,
+        }),
         {}
       ),
     [claimedOrders]
   );
 
   useEffect(() => {
-    if (Object.keys(paidUserPhoneToOrder).length) {
+    if (Object.keys(paidUserPhoneOrUseridToOrder).length) {
       setRows((prevRows) =>
         prevRows.map((row) => {
-          const order = paidUserPhoneToOrder[row.phone_number];
+          const userByPhone = paidUserPhoneOrUseridToOrder[row.phone_number];
+          const userByUserid = paidUserPhoneOrUseridToOrder[row.user_id];
+          const order = userByPhone || userByUserid;
+
           let value = !!order ? '是' : '-';
           if (order) {
             if (String(order.user_id) !== String(row.user_id)) {
@@ -85,17 +96,19 @@ const StuTable: FC<StuTableProps> = ({
           return {
             ...row,
             paid: value,
-            flagid_name: paidUserPhoneToOrder[row.phone_number]?.flagid_name,
+            flagid_name: order?.flagid_name,
           };
         })
       );
     }
-    if (Object.keys(claimedUserPhoneToOrder).length) {
+    if (Object.keys(claimedUserPhoneOrUseridToOrder).length) {
       setRows((prevRows) =>
         prevRows.map((row) => {
-          const value = !!claimedUserPhoneToOrder[row.phone_number]
-            ? '是'
-            : '-';
+          const userByPhone = claimedUserPhoneOrUseridToOrder[row.phone_number];
+          const userByUserid = claimedUserPhoneOrUseridToOrder[row.user_id];
+          const order = userByPhone || userByUserid;
+
+          const value = !!order ? '是' : '-';
           return {
             ...row,
             claimed: value,
@@ -104,7 +117,7 @@ const StuTable: FC<StuTableProps> = ({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paidUserPhoneToOrder, claimedUserPhoneToOrder]);
+  }, [paidUserPhoneOrUseridToOrder, claimedUserPhoneOrUseridToOrder]);
 
   useEffect(() => {
     if (logisticItems.length) {

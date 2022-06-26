@@ -279,3 +279,11 @@ export type ClassInfo = {
   term_name: string;
   user_id: number;
 };
+
+export type OrderQuery = {
+  nickName?: string;
+  phone?: string;
+  userId?: string;
+  classInfo?: string;
+  workName?: string;
+};

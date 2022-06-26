@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import {
   postFestivalData,
-  getFestivalData,
   postCrmData,
   classDataToClassInfo,
   getCrmData,
@@ -15,6 +14,7 @@ import {
   LogisticItemBE,
   Order,
   OrderData,
+  OrderQuery,
   OwnerData,
   Student,
   StudentBE,
@@ -26,13 +26,12 @@ import {
  * ownerName: string // 归属人
  */
 
-const queryOrder = (token: string, phone: string) => {
+const queryOrder = (token: string, query: OrderQuery, limit: number = 10) => {
   return postFestivalData(
     token,
     'https://festival.codemao.cn/yyb2019/index/checkAddOrder',
     {
       flag: '4',
-      work_name: '',
       tit: '',
       times: [],
       begin: '',
@@ -41,42 +40,45 @@ const queryOrder = (token: string, phone: string) => {
       tobegin: '',
       toend: '',
       toflag: 'all',
-      username: '',
-      tel: phone,
       type: 2,
       paytit: '',
-      user_id: '',
       login_name: '',
-      term_name: '',
-      teacher_name: '',
       page: 1,
       out_trade_no: '',
-      classinfo: '',
       businessType: 'all',
       isflag: '',
       teacher_email_1000: '',
       teacher_email_16: '',
       teacher_email_ti: '',
       teacher_email_nian: '',
-      nickname: '',
       claim_status: 'all',
       tianmaocode: '',
       payment_method: 'all',
       hand_name: '',
-      limit: 10,
+      username: '',
+      teacher_name: '',
+      // Can get but no need
+      term_name: '',
+
+      nickname: query.nickName || '',
+      tel: query.phone || '',
+      user_id: query.userId || '',
+      work_name: query.workName || '',
+
+      classinfo: query.classInfo || '',
+      limit,
     }
   );
 };
 
 const getOrderDataByUser = async (
   token: string,
-  phone: string,
-  workName: string,
-  ownerName: string
+  query: OrderQuery,
+  workName: string
 ): Promise<OrderData> => {
-  if (!token || !phone) return null;
+  if (!token) return null;
 
-  const res = await queryOrder(token, phone);
+  const res = await queryOrder(token, query);
   if (res.res === 'error') {
     throw res.code;
   }
@@ -87,7 +89,7 @@ const getOrderDataByUser = async (
   for (let i = 0; i < info.length; i += 1) {
     if (info[i].work_name && info[i].work_name.includes(workName)) {
       const data: OrderData = {
-        order: { ...info[i], phone_number: phone },
+        order: info[0],
         paid: true,
       };
       if (!!info[i].flagid_name) {
@@ -97,6 +99,27 @@ const getOrderDataByUser = async (
     }
   }
   return null;
+};
+
+const getSystemClaimedOrdersData = async (
+  token: string,
+  classInfo: string
+): Promise<OrderData[]> => {
+  if (!token) return [];
+
+  const res = await queryOrder(token, { classInfo }, 1000);
+  if (res.res === 'error') {
+    throw res.code;
+  }
+
+  const info = res.info ?? [];
+
+  return info.map(
+    (item: Order): OrderData => ({
+      order: item,
+      claimed: true,
+    })
+  );
 };
 
 const claimOrder = (
@@ -185,7 +208,7 @@ export const getOwnerByEmail = (
     'https://festival.codemao.cn/yyb2019/index/checkAchievement',
     { teacher: email }
   ).then((res) => {
-    const { info } = res;
+    const { info = [] } = res;
 
     if (info.length === 1) {
       return info[0];
@@ -233,9 +256,9 @@ export const filterOutClassData = (
   return null;
 };
 
-export const testHasAccess = async (token: string, phone: string) => {
+export const testHasAccess = async (token: string, query: OrderQuery) => {
   try {
-    await getOrderDataByUser(token, phone, '', '');
+    await getOrderDataByUser(token, query, '');
     return true;
   } catch (errCode) {
     if (errCode === 50008) {
@@ -245,19 +268,43 @@ export const testHasAccess = async (token: string, phone: string) => {
   }
 };
 
-export const getOrdersData = (
+export const getOrdersData = async (
   token: string,
-  toCheckPhones: string[],
+  toCheckQueries: OrderQuery[],
   workName: string,
-  ownerName: string
+  classInfo: string
 ) => {
-  if (!toCheckPhones.length) return [];
+  if (!toCheckQueries.length) return [];
 
-  return Promise.all(
-    toCheckPhones.map((phone) =>
-      getOrderDataByUser(token, phone, workName, ownerName)
+  const buyedOrders = (
+    await Promise.all(
+      toCheckQueries.map((query) => getOrderDataByUser(token, query, workName))
     )
-  );
+  ).filter((order) => !!order);
+
+  const claimedOrders = await getOrdersDataClaimedBySystem(token, classInfo);
+
+  const ordersMap: Record<string, OrderData> = {};
+  [...buyedOrders, ...claimedOrders].forEach((orderData: OrderData) => {
+    const order = orderData!.order;
+    const orderInMap = ordersMap[order.user_id];
+
+    if (orderInMap) {
+      orderInMap.paid = orderInMap.paid || orderData!.paid;
+      orderInMap.claimed = orderInMap.claimed || orderData!.claimed;
+    } else {
+      ordersMap[order.user_id] = orderData;
+    }
+  });
+
+  return Object.keys(ordersMap).map((key) => ordersMap[key]);
+};
+
+export const getOrdersDataClaimedBySystem = (
+  token: string,
+  classInfo: string
+) => {
+  return getSystemClaimedOrdersData(token, classInfo);
 };
 
 export const claimOrders = async (
