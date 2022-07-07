@@ -36,6 +36,7 @@ import {
   Container,
   Divider,
   Grid,
+  Link,
 } from '@mui/material';
 import { getColumns } from './constants/columns';
 
@@ -305,6 +306,27 @@ const App: FC = () => {
         </Grid>
         <Grid item md={2} xs={12}>
           <Box sx={{ p: 1, background: '#fff' }}>
+            <Link href="https://www.cordcloud.biz/user" target="_blank">
+              <Button
+                variant="contained"
+                sx={{ width: '100%', marginBottom: 1 }}
+                color="secondary"
+              >
+                科学上网
+              </Button>
+            </Link>
+            <Link
+              href="https://chrome.google.com/webstore/detail/%E7%8F%AD%E6%9C%9F%E5%B7%A5%E5%85%B7/ecibdknchcmcamhoafledcagpidalomj?hl=zh-CN"
+              target="_blank"
+            >
+              <Button
+                variant="contained"
+                sx={{ width: '100%', marginBottom: 1 }}
+                color="success"
+              >
+                下载插件
+              </Button>
+            </Link>
             <CsvDownloader
               filename={`${formData.classInfo}`}
               datas={rows}
@@ -315,7 +337,11 @@ const App: FC = () => {
                 !!classInfos.length
               ).map((item) => ({ id: item.id, displayName: item.label }))}
             >
-              <Button variant="contained" sx={{ width: '100%' }}>
+              <Button
+                variant="contained"
+                sx={{ width: '100%' }}
+                color="primary"
+              >
                 导出表格
               </Button>
             </CsvDownloader>

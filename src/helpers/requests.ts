@@ -331,7 +331,7 @@ export const claimOrders = async (
 };
 
 export const getStudentsByClass = (classId: number, termId: number) => {
-  return postCrmData('http://42.194.164.225:3000/class/students', {
+  return postCrmData('/api/codemao/class/students', {
     class_id: classId,
     term_id: termId,
   }).then((data) =>
@@ -357,7 +357,7 @@ export const getStudentsByClass = (classId: number, termId: number) => {
 };
 
 export const getLogisticsByPhone = (phone: string) => {
-  return postCrmData('http://42.194.164.225:3000/student/logistics', {
+  return postCrmData('/api/codemao/student/logistics', {
     phone,
   }).then((data) =>
     (data?.data?.items ?? []).map(
@@ -424,7 +424,7 @@ export const getMatchedLogicsByPhones = async (
 };
 
 export const getUserClassInfo = (userId: number): Promise<ClassInfo[]> => {
-  return getCrmData(`http://42.194.164.225:3000/users/${userId}`).then((data) =>
+  return getCrmData(`/api/codemao/users/${userId}`).then((data) =>
     (data?.class_info ?? []).map(
       (item: ClassInfoBE): ClassInfo => ({
         ...item,

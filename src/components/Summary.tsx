@@ -40,7 +40,7 @@ const Summary: FC<SummaryProps> = ({
           <strong>
             续费率：
             {ordersData.length &&
-              Number((paidOrders.length / ordersData.length) * 100).toFixed(
+              Number((paidOrders.length / classStudents.length) * 100).toFixed(
                 2
               )}{' '}
             %
