@@ -330,12 +330,18 @@ export const claimOrders = async (
   }
 };
 
-export const getStudentsByClass = (classId: number, termId: number) => {
+export const getStudentsByClass = (
+  classId: number,
+  termId: number
+): Promise<Student[]> => {
   return postCrmData('/api/codemao/class/students', {
     class_id: classId,
     term_id: termId,
-  }).then((data) =>
-    data.items.map(
+  }).then((data) => {
+    if (data.error_code) {
+      throw Error(data.error_message);
+    }
+    return data.items.map(
       (item: StudentBE, i: number): Student => ({
         index: i + 1,
         user_id: item.user_id,
@@ -352,8 +358,8 @@ export const getStudentsByClass = (classId: number, termId: number) => {
         contact_name: (item.parent_name || item.child_name)?.trim(),
         phone_number_formatted: formatPhone(item.phone_number)?.trim(),
       })
-    )
-  );
+    );
+  });
 };
 
 export const getLogisticsByPhone = (phone: string) => {

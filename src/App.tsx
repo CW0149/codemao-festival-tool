@@ -169,21 +169,30 @@ const App: FC = () => {
     }
   };
 
-  const getStudentsByClassInfo = () => {
+  const getStudentsByClassInfo = async () => {
     if (!classData) return;
 
     setIsQueryingStudents(true);
 
-    getStudentsByClass(classData.class_id, classData.term_id).then(
-      (classStudents = []) => {
-        setIsQueryingStudents(false);
-        setClassStudents(classStudents);
+    try {
+      const classStudents = await getStudentsByClass(
+        classData.class_id,
+        classData.term_id
+      );
 
-        if (!classStudents?.length) {
-          alert('未获取到学生列表，请重试或刷新页面');
-        }
+      if (!classStudents?.length) {
+        alert('未获取到学生列表，请重试或刷新页面');
+        return;
       }
-    );
+
+      setIsQueryingStudents(false);
+      setClassStudents(classStudents);
+    } catch (err) {
+      alert(`${err} 请检查内部系统是否已登录`);
+
+      window.open('https://internal-account.codemao.cn/');
+      // alert(err);
+    }
   };
 
   const queryOrdersHandler = async (
