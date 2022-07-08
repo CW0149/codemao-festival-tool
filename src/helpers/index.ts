@@ -1,5 +1,12 @@
 import { ApiResponse, ClassData } from '../constants/types';
 
+const getInternalAccountToken = () => {
+  return (
+    new URLSearchParams(window.location.search).get('internal_account_token') ||
+    ''
+  );
+};
+
 export const postFestivalData = (
   token: string,
   url: string,
@@ -41,6 +48,7 @@ export const postCrmData = (url: string, data: Record<string, any>) => {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/plain, */*',
+      token: getInternalAccountToken(),
     },
     body: JSON.stringify(data),
   }).then((res) => {
@@ -54,6 +62,7 @@ export const getCrmData = (url: string) => {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/plain, */*',
+      token: getInternalAccountToken(),
     },
   }).then((res) => {
     return res.json();
