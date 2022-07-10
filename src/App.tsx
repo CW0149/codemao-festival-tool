@@ -1,5 +1,4 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import CsvDownloader from 'react-csv-downloader';
 import './App.css';
 import QueryForm from './components/QueryForm';
 import Summary from './components/Summary';
@@ -39,6 +38,8 @@ import {
   Link,
 } from '@mui/material';
 import { getColumns } from './constants/columns';
+import AlertDialog from './components/AlertDialog';
+import MoreTools from './components/MoreTools';
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
@@ -52,11 +53,19 @@ const App: FC = () => {
   const [ownerData, setOwnerData] = useState<OwnerData>();
   const [ownerClassesData, setOwnerClassesData] = useState<ClassData[]>();
   const [classStudents, setClassStudents] = useState<Student[]>([]);
+  const [rows, setRows] = useState<StudentTableRow[]>([]);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [logisticItems, setLogisticItems] = useState<
     (LogisticItem | undefined)[]
   >([]);
   const [classInfos, setClassInfos] = useState<(ClassInfo | undefined)[]>([]);
+
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertProps, setAlertProps] = useState({
+    title: '',
+    description: '',
+    actions: <></>,
+  });
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -98,7 +107,10 @@ const App: FC = () => {
     [notClaimedOrders]
   );
 
-  const [rows, setRows] = useState<StudentTableRow[]>([]);
+  const classData = useMemo(
+    () => filterOutClassData(formData.classInfo, ownerClassesData),
+    [formData.classInfo, ownerClassesData]
+  );
 
   useEffect(() => {
     setSelectedStudents(classStudents);
@@ -145,11 +157,6 @@ const App: FC = () => {
     setLogisticItems([]);
   }, [selectedStudents]);
 
-  const classData = useMemo(
-    () => filterOutClassData(formData.classInfo, ownerClassesData),
-    [formData.classInfo, ownerClassesData]
-  );
-
   const getClassesDataByEmail = async () => {
     try {
       if (!formData.token) throw Error('请设置token');
@@ -188,10 +195,32 @@ const App: FC = () => {
       setIsQueryingStudents(false);
       setClassStudents(classStudents);
     } catch (err) {
-      alert(`${err} 请检查内部系统是否已登录`);
+      setAlertOpen(true);
+      setAlertProps({
+        title: String(err),
+        description: `请检查是否已登“编程猫内部系统”，若已登录请“刷新页面”`,
+        actions: (
+          <>
+            <Link
+              target="_blank"
+              href="https://internal-account.codemao.cn/"
+              underline="none"
+            >
+              <Button>进入编程猫内部系统</Button>
+            </Link>
+            <Button
+              onClick={() => {
+                window.location.reload();
+                setAlertOpen(false);
+              }}
+            >
+              刷新页面
+            </Button>
+          </>
+        ),
+      });
 
-      window.open('https://internal-account.codemao.cn/');
-      // alert(err);
+      setIsQueryingStudents(false);
     }
   };
 
@@ -263,6 +292,8 @@ const App: FC = () => {
     }
   };
 
+  const setAlertOpenFn = (open: boolean) => () => setAlertOpen(open);
+
   return (
     <div className="App">
       <Grid container spacing={1} alignItems="flex-end">
@@ -314,47 +345,16 @@ const App: FC = () => {
           />
         </Grid>
         <Grid item md={2} xs={12}>
-          <Box sx={{ p: 1, background: '#fff' }}>
-            <Link href="https://www.cordcloud.biz/user" target="_blank">
-              <Button
-                variant="contained"
-                sx={{ width: '100%', marginBottom: 1 }}
-                color="secondary"
-              >
-                科学上网
-              </Button>
-            </Link>
-            <Link
-              href="https://chrome.google.com/webstore/detail/%E7%8F%AD%E6%9C%9F%E5%B7%A5%E5%85%B7/ecibdknchcmcamhoafledcagpidalomj?hl=zh-CN"
-              target="_blank"
-            >
-              <Button
-                variant="contained"
-                sx={{ width: '100%', marginBottom: 1 }}
-                color="success"
-              >
-                下载插件
-              </Button>
-            </Link>
-            <CsvDownloader
-              filename={`${formData.classInfo}`}
-              datas={rows}
-              columns={getColumns(
-                !!paidOrders.length,
-                !!claimedOrders.length,
-                !!logisticItems.length,
-                !!classInfos.length
-              ).map((item) => ({ id: item.id, displayName: item.label }))}
-            >
-              <Button
-                variant="contained"
-                sx={{ width: '100%' }}
-                color="primary"
-              >
-                导出表格
-              </Button>
-            </CsvDownloader>
-          </Box>
+          <MoreTools
+            filename={formData.classInfo}
+            rows={rows}
+            columns={getColumns(
+              !!paidOrders.length,
+              !!claimedOrders.length,
+              !!logisticItems.length,
+              !!classInfos.length
+            ).map((item) => ({ id: item.id, displayName: item.label }))}
+          />
         </Grid>
       </Grid>
       <Divider sx={{ margin: '10px 0' }} />
@@ -394,6 +394,14 @@ const App: FC = () => {
           </>
         )}
       </div>
+
+      <AlertDialog
+        open={alertOpen}
+        setOpen={setAlertOpenFn}
+        title={alertProps.title}
+        description={alertProps.description}
+        dialogActions={alertProps.actions}
+      />
     </div>
   );
 };
