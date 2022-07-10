@@ -35,10 +35,12 @@ import {
   Divider,
   Grid,
   Link,
+  Skeleton,
 } from '@mui/material';
 import { getColumns } from './constants/columns';
 import AlertDialog, { AlertProps } from './components/AlertDialog';
 import MoreTools from './components/MoreTools';
+import { calculateNewValue } from '@testing-library/user-event/dist/utils';
 
 const LoginAlert: FC<{ enterSystemName: string; systemLink: string }> = ({
   enterSystemName,
@@ -364,16 +366,13 @@ const App: FC = () => {
 
       <div className="results">
         {isQueryingStudents ? (
-          <Container
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CircularProgress />
-          </Container>
+          <>
+            <Skeleton width={500} height={30} />
+
+            {[...Array(11)].map((item) => (
+              <Skeleton height={`calc((100vh - 200px) / 12)`} />
+            ))}
+          </>
         ) : (
           <>
             <Summary
