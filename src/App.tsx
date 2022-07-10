@@ -29,7 +29,6 @@ import {
 } from './helpers/requests';
 import { formData as MockedFormData } from './mocks/formData';
 import {
-  Box,
   Button,
   CircularProgress,
   Container,
@@ -38,8 +37,19 @@ import {
   Link,
 } from '@mui/material';
 import { getColumns } from './constants/columns';
-import AlertDialog from './components/AlertDialog';
+import AlertDialog, { AlertProps } from './components/AlertDialog';
 import MoreTools from './components/MoreTools';
+
+const LoginAlert: FC<{ enterSystemName: string; systemLink: string }> = ({
+  enterSystemName,
+  systemLink,
+}) => {
+  return (
+    <Link mr={1} href={systemLink} underline="none">
+      <Button variant="contained">{enterSystemName}</Button>
+    </Link>
+  );
+};
 
 const App: FC = () => {
   const [ordersData, setOrdersData] = useState([] as OrderData[]);
@@ -61,11 +71,7 @@ const App: FC = () => {
   const [classInfos, setClassInfos] = useState<(ClassInfo | undefined)[]>([]);
 
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertProps, setAlertProps] = useState({
-    title: '',
-    description: '',
-    actions: <></>,
-  });
+  const [alertProps, setAlertProps] = useState({} as Partial<AlertProps>);
 
   const paidOrdersData = useMemo(
     () => ordersData.filter((data) => !!data) as ValidOrderData[],
@@ -161,18 +167,28 @@ const App: FC = () => {
     try {
       if (!formData.token) throw Error('请设置token');
 
-      getOwnerByEmail(formData.token, formData.ownerEmail).then((owner) => {
-        setOwnerData(owner);
-        getClassesData(formData.token as string, owner.id).then(
-          (classesData) => {
-            setOwnerClassesData(classesData);
-            setQueryOrderDisabled(false);
-          }
-        );
-      });
+      const owner = await getOwnerByEmail(formData.token, formData.ownerEmail);
+
+      setOwnerData(owner);
+
+      const classesData = await getClassesData(
+        formData.token as string,
+        owner.id
+      );
+      setOwnerClassesData(classesData);
+      setQueryOrderDisabled(false);
     } catch (err) {
-      setQueryOrderDisabled(true);
-      alert(err);
+      setAlertOpen(true);
+      setAlertProps({
+        title: String(err),
+        description: `请检查是否已登“年课系统”，若已登录请重新点击插件的“打开班期工具”按钮`,
+        dialogActions: (
+          <LoginAlert
+            systemLink="https://festival.codemao.cn/h5/yybAdmin/"
+            enterSystemName="进入年课系统"
+          />
+        ),
+      });
     }
   };
 
@@ -198,25 +214,12 @@ const App: FC = () => {
       setAlertOpen(true);
       setAlertProps({
         title: String(err),
-        description: `请检查是否已登“编程猫内部系统”，若已登录请“刷新页面”`,
-        actions: (
-          <>
-            <Link
-              target="_blank"
-              href="https://internal-account.codemao.cn/"
-              underline="none"
-            >
-              <Button>进入编程猫内部系统</Button>
-            </Link>
-            <Button
-              onClick={() => {
-                window.location.reload();
-                setAlertOpen(false);
-              }}
-            >
-              刷新页面
-            </Button>
-          </>
+        description: `请检查是否已登“编程猫内部系统”，若已登录请重新点击插件的“打开班期工具”按钮`,
+        dialogActions: (
+          <LoginAlert
+            systemLink="https://internal-account.codemao.cn/"
+            enterSystemName="进入编程猫内部系统"
+          />
         ),
       });
 
@@ -400,7 +403,7 @@ const App: FC = () => {
         setOpen={setAlertOpenFn}
         title={alertProps.title}
         description={alertProps.description}
-        dialogActions={alertProps.actions}
+        dialogActions={alertProps.dialogActions}
       />
     </div>
   );

@@ -21,7 +21,11 @@ export const postFestivalData = (
     },
     body: JSON.stringify(query),
   }).then((res) => {
-    return res.json();
+    if (res.ok) {
+      return res.json();
+    }
+
+    throw new Error(res.statusText);
   });
 };
 

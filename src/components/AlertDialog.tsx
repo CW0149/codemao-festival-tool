@@ -7,14 +7,14 @@ import {
 } from '@mui/material';
 import { FC, ReactChild } from 'react';
 
-type Props = {
+export type AlertProps = {
   open: boolean;
   setOpen: (open: boolean) => () => void;
-  title: string;
-  description: string;
-  dialogActions: ReactChild;
+  title?: string;
+  description?: string;
+  dialogActions?: ReactChild;
 };
-const AlertDialog: FC<Props> = ({
+const AlertDialog: FC<AlertProps> = ({
   open,
   setOpen,
   title,
@@ -32,7 +32,7 @@ const AlertDialog: FC<Props> = ({
       <DialogContent>
         <DialogContentText>{description}</DialogContentText>
       </DialogContent>
-      <DialogActions>{dialogActions}</DialogActions>
+      {dialogActions && <DialogActions>{dialogActions}</DialogActions>}
     </Dialog>
   );
 };

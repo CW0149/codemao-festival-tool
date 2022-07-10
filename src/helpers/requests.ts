@@ -207,15 +207,19 @@ export const getOwnerByEmail = (
     token,
     'https://festival.codemao.cn/yyb2019/index/checkAchievement',
     { teacher: email }
-  ).then((res) => {
-    const { info = [] } = res;
+  )
+    .then((res) => {
+      const { info = [] } = res;
 
-    if (info.length === 1) {
-      return info[0];
-    } else {
-      throw Error('未找到归属人信息');
-    }
-  });
+      if (info.length === 1) {
+        return info[0];
+      } else {
+        throw Error('未找到归属人信息');
+      }
+    })
+    .catch((err) => {
+      throw Error('年课系统token失效');
+    });
 };
 
 /*
